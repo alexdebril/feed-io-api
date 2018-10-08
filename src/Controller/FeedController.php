@@ -21,6 +21,7 @@ class FeedController
 
     public function consume(Request $request)
     {
-        return new Response(json_encode(["data" => "You could be loved"]));
+        $result = $this->feedIo->read($request->get('url'));
+        return new Response($this->feedIo->format($result->getFeed(), 'json'));
     }
 }
