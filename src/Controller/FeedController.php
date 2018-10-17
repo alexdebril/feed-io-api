@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use \FeedIo\FeedIo;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class FeedController
@@ -19,9 +19,38 @@ class FeedController
         $this->feedIo = $feedIo;
     }
 
-    public function consume(Request $request)
+    /**
+     * 
+     */
+    public function consume(Request $request) : JsonResponse
     {
-        $result = $this->feedIo->read($request->get('url'));
-        return new Response($this->feedIo->format($result->getFeed(), 'json'));
+        try {
+            return new JsonResponse(
+                $this->feedIo->read($this->extractUrl($request))->getFeed()
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'type' => get_class($e),
+                    'title' => $e->getMessage(),
+                ],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
+                [
+                    'Content-Type' => 'application/problem+json'
+                ]
+            );
+        }
+        
+    }
+
+    private function extractUrl(Request $request) : string
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if ( isset($data['url']) ) {
+            return $data['url'];
+        }
+
+        throw new \InvalidArgumentException("No url found in the request");
     }
 }
