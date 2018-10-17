@@ -40,7 +40,26 @@ class FeedController
                 ]
             );
         }
-        
+    }
+
+    public function discover(Request $request) : JsonResponse
+    {
+        try {
+            return new JsonResponse(
+                $this->feedIo->discover($this->extractUrl($request))
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'type' => get_class($e),
+                    'title' => $e->getMessage(),
+                ],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
+                [
+                    'Content-Type' => 'application/problem+json'
+                ]
+            );
+        }
     }
 
     private function extractUrl(Request $request) : string

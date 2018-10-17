@@ -3,3 +3,8 @@ feed_consume:
     methods: ["POST"]
     controller: App\Controller\FeedController::consume
 
+feed_discover:
+    path: /feed/discover
+    methods: ["POST"]
+    controller: App\Controller\FeedController::discover
+
