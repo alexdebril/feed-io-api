@@ -1,3 +1,7 @@
+index:
+    path: /
+    controller: App\Controller\IndexController::index
+
 feed_consume:
     path: /feed/consume
     methods: ["POST"]
@@ -7,4 +11,3 @@ feed_discover:
     path: /feed/discover
     methods: ["POST"]
     controller: App\Controller\FeedController::discover
-
