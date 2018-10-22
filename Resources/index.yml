@@ -1,0 +1,14 @@
+feedio:
+    title: feed-io API
+    summary: use this API to discover and consume feeds
+    usage:
+        consume:
+            url: /feed/consume
+            method: POST
+            request:
+                body: {"url": "http://feed.url"}
+        discover:
+            url: /feed/discover
+            method: POST
+            request:
+                body: {"url": "http://feed.url"}
