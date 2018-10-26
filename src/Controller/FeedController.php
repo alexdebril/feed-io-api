@@ -14,19 +14,30 @@ class FeedController
      */
     private $feedIo;
 
-    public function __construct(FeedIo $feedIo)
+    private $allowedOrigin;
+
+    /**
+     * @param FeedIo $feedIo        feed-io instance
+     * @param string $allowedOrigin
+     */
+    public function __construct(FeedIo $feedIo, string $allowedOrigin)
     {
         $this->feedIo = $feedIo;
+        $this->allowedOrigin = $allowedOrigin;
     }
 
     /**
-     * 
+     *
      */
     public function consume(Request $request) : JsonResponse
     {
         try {
             return new JsonResponse(
-                $this->feedIo->read($this->extractUrl($request))->getFeed()
+                $this->feedIo->read($this->extractUrl($request))->getFeed(),
+                200,
+                [
+                    'Access-Control-Allow-Origin' => $this->allowedOrigin
+                ]
             );
         } catch (\Exception $e) {
             return new JsonResponse(
