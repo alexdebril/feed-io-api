@@ -57,7 +57,11 @@ class FeedController
     {
         try {
             return new JsonResponse(
-                $this->feedIo->discover($this->extractUrl($request))
+                $this->feedIo->discover($this->extractUrl($request)),
+                200,
+                [
+                    'Access-Control-Allow-Origin' => $this->allowedOrigin
+                ]
             );
         } catch (\Exception $e) {
             return new JsonResponse(
