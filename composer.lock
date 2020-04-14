@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "debril/feed-io",
-            "version": "v4.5.4",
+            "version": "v4.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alexdebril/feed-io.git",
-                "reference": "7e5d3945a9b4f213f97882aaee931e6cadcadc8e"
+                "reference": "02ce25155b9a823a7a8104d80b7cf162c64b895a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexdebril/feed-io/zipball/7e5d3945a9b4f213f97882aaee931e6cadcadc8e",
-                "reference": "7e5d3945a9b4f213f97882aaee931e6cadcadc8e",
+                "url": "https://api.github.com/repos/alexdebril/feed-io/zipball/02ce25155b9a823a7a8104d80b7cf162c64b895a",
+                "reference": "02ce25155b9a823a7a8104d80b7cf162c64b895a",
                 "shasum": ""
             },
             "require": {
@@ -64,7 +64,7 @@
                 "news",
                 "rss"
             ],
-            "time": "2020-03-12T16:11:43+00:00"
+            "time": "2020-04-06T14:09:29+00:00"
         },
         {
             "name": "debril/rss-atom-bundle",
