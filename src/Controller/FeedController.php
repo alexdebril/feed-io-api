@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -9,26 +9,17 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class FeedController
 {
-    /**
-     * @var \FeedIo\FeedIo
-     */
-    private $feedIo;
 
-    private $allowedOrigin;
+    private FeedIo $feedIo;
 
-    /**
-     * @param FeedIo $feedIo        feed-io instance
-     * @param string $allowedOrigin
-     */
+    private string $allowedOrigin;
+
     public function __construct(FeedIo $feedIo, string $allowedOrigin)
     {
         $this->feedIo = $feedIo;
         $this->allowedOrigin = $allowedOrigin;
     }
 
-    /**
-     *
-     */
     public function consume(Request $request) : JsonResponse
     {
         try {
