@@ -5,6 +5,7 @@
         "php": ">=7.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-json": "*",
         "debril/rss-atom-bundle": "^5.0",
         "symfony/console": "*",
         "symfony/flex": "^1.1",
