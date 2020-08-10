@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
+        "ext-redis": "*",
         "debril/feed-io-storage": "^1.3",
         "debril/rss-atom-bundle": "^5.0",
         "symfony/console": "*",
