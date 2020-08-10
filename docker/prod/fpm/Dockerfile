@@ -7,6 +7,8 @@ RUN set -ex &&\
  apt-get install -y --no-install-recommends unzip libzip-dev zlib1g-dev libicu-dev &&\
  docker-php-ext-install -j 8 zip intl &&\
  docker-php-ext-configure intl &&\
+ pecl install mongodb redis &&\
+ docker-php-ext-enable mongodb redis &&\
  rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
 COPY . /var/www/html
