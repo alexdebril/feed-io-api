@@ -21,7 +21,7 @@ RUN set -ex &&\
 
 USER feed-io
 
-COPY ../../.. ${USER_HOME}/app
+COPY . ${USER_HOME}/app
 WORKDIR ${USER_HOME}/app
 
 RUN set -ex &&\
