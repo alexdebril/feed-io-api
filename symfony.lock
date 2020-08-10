@@ -1,6 +1,12 @@
 {
+    "composer/package-versions-deprecated": {
+        "version": "1.10.99"
+    },
     "debril/feed-io": {
         "version": "v4.3.4"
+    },
+    "debril/feed-io-storage": {
+        "version": "v1.3.11"
     },
     "debril/rss-atom-bundle": {
         "version": "4.0",
@@ -19,6 +25,12 @@
     },
     "guzzlehttp/psr7": {
         "version": "1.4.2"
+    },
+    "jean85/pretty-package-versions": {
+        "version": "1.5.0"
+    },
+    "mongodb/mongodb": {
+        "version": "1.7.0"
     },
     "php": {
         "version": "7.4"
