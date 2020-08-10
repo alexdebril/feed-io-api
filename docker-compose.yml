@@ -8,6 +8,7 @@ services:
     environment:
       APP_ENV: dev
       APP_SECRET: change_me
+      ALLOWED_ORIGIN: localhost
       MONGODB_DSN: "mongodb://mongo:27017"
       MONGODB_DATABASE: "feedio_api"
       REDIS_HOST: redis
