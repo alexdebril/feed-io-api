@@ -1,0 +1,75 @@
+version: '3.2'
+
+# used for staging purpose only. DO NOT use this to deploy the application to production
+services:
+
+  fpm:
+    build: ./docker/fpm
+    environment:
+      APP_ENV: dev
+      APP_SECRET: change_me
+      MONGODB_DSN: "mongodb://mongo:27017"
+      MONGODB_DATABASE: "feedio_api"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    links:
+      - redis
+      - mongo
+    volumes:
+      - '.:/var/www/html'
+
+  nginx:
+    depends_on:
+      - fpm
+    image: nginx:alpine
+    ports:
+      - 8080:80
+      - 8081:81
+    volumes:
+      - './public:/var/www/html/public:cached'
+      - './var/images:/var/www/html/images:ro'
+      - './docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro'
+
+  updater:
+    build: ./docker/cli
+    restart: always
+    command: "./bin/console feed-io:update -vv"
+    environment:
+      APP_ENV: dev
+      IMAGES_FOLDER: var/images
+      IMAGES_HOST: "http://localhost:8081"
+      MONGODB_DSN: "mongodb://mongo:27017"
+      MONGODB_DATABASE: "feedio_api"
+    links:
+      - mongo
+    volumes:
+      - .:/srv/updater/app
+
+  cli:
+    build: ./docker/cli
+    environment:
+      APP_ENV: dev
+      IMAGES_FOLDER: var/images
+      IMAGES_HOST: "http://localhost:8081"
+      MONGODB_DSN: "mongodb://mongo:27017"
+      MONGODB_DATABASE: "feedio_api"
+    links:
+      - mongo
+    volumes:
+      - .:/srv/feed-io-api/app
+
+  mongo:
+    image: mongo
+    hostname: mongo
+    environment:
+      MONGO_INITDB_DATABASE: feedio
+    volumes:
+      - mongo:/data/db
+      - ./vendor/debril/feed-io-storage/database/init.js:/docker-entrypoint-initdb.d/init.js
+
+  redis:
+    image: redis
+    hostname: redis
+
+volumes:
+  mongo:
