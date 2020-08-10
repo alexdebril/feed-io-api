@@ -15,9 +15,9 @@ RUN groupadd -g ${DOCKER_GID} feed-io &&\
 RUN set -ex &&\
  apt-get update &&\
  apt-get install -y --no-install-recommends unzip libzip-dev zlib1g-dev &&\
- feed-io-php-ext-install -j 8 zip &&\
+ docker-php-ext-install -j 8 zip &&\
  pecl install mongodb &&\
- feed-io-php-ext-enable mongodb &&\
+ docker-php-ext-enable mongodb &&\
  rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
