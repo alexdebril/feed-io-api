@@ -23,49 +23,53 @@ class FeedController
     public function consume(Request $request) : JsonResponse
     {
         try {
-            return new JsonResponse(
-                $this->feedIo->read($this->extractUrl($request))->getFeed(),
-                200,
-                [
-                    'Access-Control-Allow-Origin' => $this->allowedOrigin
-                ]
+            return $this->newJsonResponse(
+                $this->feedIo->read(
+                    $this->extractUrl($request)
+                )->getFeed()
             );
         } catch (\Exception $e) {
-            return new JsonResponse(
-                [
-                    'type' => get_class($e),
-                    'title' => $e->getMessage(),
-                ],
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
-                [
-                    'Content-Type' => 'application/problem+json'
-                ]
-            );
+            return $this->newJsonError($e);
         }
     }
 
     public function discover(Request $request) : JsonResponse
     {
         try {
-            return new JsonResponse(
-                $this->feedIo->discover($this->extractUrl($request)),
-                200,
-                [
-                    'Access-Control-Allow-Origin' => $this->allowedOrigin
-                ]
+            return $this->newJsonResponse(
+                $this->feedIo->discover(
+                    $this->extractUrl($request)
+                )
             );
         } catch (\Exception $e) {
-            return new JsonResponse(
-                [
-                    'type' => get_class($e),
-                    'title' => $e->getMessage(),
-                ],
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
-                [
-                    'Content-Type' => 'application/problem+json'
-                ]
-            );
+            return $this->newJsonError($e);
         }
+    }
+
+    private function newJsonResponse($data): JsonResponse
+    {
+        return new JsonResponse(
+            $data,
+            200,
+            [
+                'Access-Control-Allow-Origin' => $this->allowedOrigin
+            ]
+        );
+    }
+
+    private function newJsonError(\Throwable $exception): JsonResponse
+    {
+        return new JsonResponse(
+            [
+                'type' => get_class($exception),
+                'title' => $exception->getMessage(),
+            ],
+            JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
+            [
+                'Access-Control-Allow-Origin' => $this->allowedOrigin,
+                'Content-Type' => 'application/problem+json'
+            ]
+        );
     }
 
     private function extractUrl(Request $request) : string
