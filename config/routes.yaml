@@ -11,3 +11,8 @@ feed_discover:
     path: /feed/discover
     methods: ["POST"]
     controller: App\Controller\FeedController::discover
+
+feed_submit:
+    path: /feed/submit
+    methods: ["POST"]
+    controller: App\Controller\FeedController::submit

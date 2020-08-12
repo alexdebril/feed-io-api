@@ -1,0 +1,6 @@
+framework:
+    messenger:
+        transports:
+            async-new-feed: '%env(MESSENGER_TRANSPORT_DSN)%/new_feeds'
+        routing:
+            'App\Message\NewFeed': async-new-feed

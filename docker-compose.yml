@@ -9,6 +9,7 @@ services:
       APP_ENV: dev
       APP_SECRET: change_me
       ALLOWED_ORIGIN: localhost
+      MESSENGER_TRANSPORT_DSN: "redis://redis:6379/newfeeds"
       MONGODB_DSN: "mongodb://mongo:27017"
       MONGODB_DATABASE: "feedio_api"
       REDIS_HOST: redis
@@ -29,13 +30,13 @@ services:
       - './public:/var/www/html/public:cached'
       - './docker/dev/nginx/nginx.conf:/etc/nginx/nginx.conf:ro'
 
-
   consumer:
     build: docker/dev/cli
     #restart: always
-    command: "./bin/console feed-io:update -vv"
+    command: "./bin/console messenger:consume async-new-feed -vv"
     environment:
       APP_ENV: dev
+      MESSENGER_TRANSPORT_DSN: "redis://redis:6379/newfeeds"
       MONGODB_DSN: "mongodb://mongo:27017"
       MONGODB_DATABASE: "feedio_api"
       REDIS_HOST: redis
@@ -74,7 +75,7 @@ services:
     image: mongo
     hostname: mongo
     environment:
-      MONGO_INITDB_DATABASE: feedio_app
+      MONGO_INITDB_DATABASE: feedio_api
     volumes:
       - ./vendor/debril/feed-io-storage/database/init.js:/docker-entrypoint-initdb.d/init.js
 

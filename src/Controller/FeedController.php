@@ -2,11 +2,17 @@
 
 namespace App\Controller;
 
+use App\Message\NewFeed;
+use FeedIo\FeedInterface;
 use \FeedIo\FeedIo;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 
+/**
+ * Smells like code refactoring : many private methods in there, could be isolated in dedicated components
+ */
 class FeedController
 {
 
@@ -14,10 +20,16 @@ class FeedController
 
     private string $allowedOrigin;
 
-    public function __construct(FeedIo $feedIo, string $allowedOrigin)
+    private \Redis $redis;
+
+    private MessageBusInterface $bus;
+
+    public function __construct(FeedIo $feedIo, string $allowedOrigin, \Redis $redis, MessageBusInterface $bus)
     {
         $this->feedIo = $feedIo;
         $this->allowedOrigin = $allowedOrigin;
+        $this->redis = $redis;
+        $this->bus = $bus;
     }
 
     public function consume(Request $request) : JsonResponse
@@ -45,6 +57,24 @@ class FeedController
             return $this->newJsonError($e);
         }
     }
+
+    public function submit(Request $request): JsonResponse
+    {
+        try {
+            $url = $this->extractUrl($request);
+            if ($ok = $this->canProcess($url)) {
+                $this->bus->dispatch(
+                    new NewFeed($url)
+                );
+            }
+            return $this->newJsonResponse(
+                ['ok' => $ok]
+            );
+        } catch (\Exception $e) {
+            return $this->newJsonError($e);
+        }
+    }
+
 
     private function newJsonResponse($data): JsonResponse
     {
@@ -81,5 +111,30 @@ class FeedController
         }
 
         throw new \InvalidArgumentException("No url found in the request");
+    }
+
+    private function canProcess(string $url): bool
+    {
+        $url = filter_var($url, FILTER_VALIDATE_URL);
+        if ( ! $url ) {
+            return false;
+        }
+
+        if ($this->redis->get('url_' . $url)) {
+            return false;
+        }
+
+        $this->redis->set('url_' . $url, time());
+
+        try {
+            $feed = $this->feedIo->read($url)->getFeed();
+            if ( ! $feed instanceof FeedInterface ) {
+                throw new \RuntimeException();
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return true;
     }
 }
