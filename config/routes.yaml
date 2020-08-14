@@ -16,3 +16,8 @@ feed_submit:
     path: /feed/submit
     methods: ["POST"]
     controller: App\Controller\FeedController::submit
+
+feed_accept:
+    path: /feed/accept
+    methods: ["POST"]
+    controller: App\Controller\FeedController::accept

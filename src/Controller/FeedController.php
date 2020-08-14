@@ -3,11 +3,12 @@
 namespace App\Controller;
 
 use App\Message\NewFeed;
+use App\Storage\Entity\Feed\Status;
 use FeedIo\FeedInterface;
-use \FeedIo\FeedIo;
+use FeedIo\FeedIo;
+use App\Storage\Repository\FeedRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -75,6 +76,20 @@ class FeedController
         }
     }
 
+    public function accept(Request $request, FeedRepository $repository): JsonResponse
+    {
+        try {
+            $feed = $repository->findOneBySlug($this->extractSlug($request));
+            $feed->setStatus(
+                new Status(Status::ACCEPTED)
+            );
+            $feed->setLanguage($this->extract($request, 'language'));
+            $repository->save($feed);
+            return $this->newJsonResponse(['ok' => true]);
+        } catch (\Exception $e) {
+            return $this->newJsonError($e);
+        }
+    }
 
     private function newJsonResponse($data): JsonResponse
     {
@@ -104,13 +119,23 @@ class FeedController
 
     private function extractUrl(Request $request) : string
     {
+        return $this->extract($request, 'url');
+    }
+
+    private function extractSlug(Request $request) : string
+    {
+        return $this->extract($request, 'slug');
+    }
+
+    private function extract(Request $request, string $param) : string
+    {
         $data = json_decode($request->getContent(), true);
 
-        if ( isset($data['url']) ) {
-            return $data['url'];
+        if ( isset($data[$param]) ) {
+            return $data[$param];
         }
 
-        throw new \InvalidArgumentException("No url found in the request");
+        throw new \InvalidArgumentException(sprintf('%s not found in the request', $param));
     }
 
     private function canProcess(string $url): bool

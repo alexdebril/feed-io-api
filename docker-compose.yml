@@ -77,7 +77,7 @@ services:
     environment:
       MONGO_INITDB_DATABASE: feedio_api
     volumes:
-      - ./vendor/debril/feed-io-storage/database/init.js:/docker-entrypoint-initdb.d/init.js
+      - ./Resources/database/init.js:/docker-entrypoint-initdb.d/init.js
 
   redis:
     image: redis

@@ -4,10 +4,10 @@
 namespace App\Command;
 
 use FeedIo\FeedIo;
-use FeedIo\Storage\Entity\Feed;
-use FeedIo\Storage\Entity\Item;
-use FeedIo\Storage\Repository\FeedRepository;
-use FeedIo\Storage\Repository\ItemRepository;
+use App\Storage\Entity\Feed;
+use App\Storage\Entity\Item;
+use App\Storage\Repository\FeedRepository;
+use App\Storage\Repository\ItemRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

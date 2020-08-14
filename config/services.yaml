@@ -37,26 +37,26 @@ services:
     App\Content:
         arguments: ["%content.file%"]
 
-    FeedIo\Storage\Repository\FeedRepository:
+    App\Storage\Repository\FeedRepository:
         alias: repository.feed
 
-    FeedIo\Storage\Repository\ItemRepository:
+    App\Storage\Repository\ItemRepository:
         alias: repository.item
 
-    FeedIo\Storage\Repository\TopicRepository:
+    App\Storage\Repository\TopicRepository:
         alias: repository.topic
 
     MongoDB\Database:
         alias: mongo.database
 
     repository.feed:
-        class: FeedIo\Storage\Repository\FeedRepository
+        class: App\Storage\Repository\FeedRepository
 
     repository.item:
-        class: FeedIo\Storage\Repository\ItemRepository
+        class: App\Storage\Repository\ItemRepository
 
     repository.topic:
-        class: FeedIo\Storage\Repository\TopicRepository
+        class: App\Storage\Repository\TopicRepository
 
     mongo.client:
         class: MongoDB\Client

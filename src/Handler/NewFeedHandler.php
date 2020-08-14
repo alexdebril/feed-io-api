@@ -4,8 +4,8 @@
 namespace App\Handler;
 
 use App\Message\NewFeed;
-use FeedIo\Storage\Entity\Feed;
-use FeedIo\Storage\Repository\FeedRepository;
+use App\Storage\Entity\Feed;
+use App\Storage\Repository\FeedRepository;
 use Symfony\Component\Messenger\Handler\MessageSubscriberInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
