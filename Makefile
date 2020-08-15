@@ -1,5 +1,5 @@
 build:
-	docker-compose build --build-arg DOCKER_UID=$(shell id -u)
+	docker-compose build
 	docker-compose run cli composer install
 
 start:
