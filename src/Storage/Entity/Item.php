@@ -1,5 +1,6 @@
-<?php declare(strict_types=1);
+<?php
 
+declare(strict_types=1);
 
 namespace App\Storage\Entity;
 
@@ -56,6 +57,7 @@ class Item extends BaseItem implements Serializable, Unserializable
     public function setThumbnail(?string $thumbnail): Item
     {
         $this->thumbnail = $thumbnail;
+
         return $this;
     }
 

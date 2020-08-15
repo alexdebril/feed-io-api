@@ -1,13 +1,14 @@
-<?php declare(strict_types=1);
+<?php
 
+declare(strict_types=1);
 
 namespace App\Command;
 
-use FeedIo\FeedIo;
 use App\Storage\Entity\Feed;
 use App\Storage\Entity\Item;
 use App\Storage\Repository\FeedRepository;
 use App\Storage\Repository\ItemRepository;
+use FeedIo\FeedIo;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -35,8 +36,7 @@ class UpdateCommand extends Command
         FeedIo $feedIo,
         FeedRepository $feedRepository,
         ItemRepository $itemRepository
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->feedIo = $feedIo;
         $this->feedRepository = $feedRepository;
@@ -59,12 +59,12 @@ class UpdateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->logger->info("starting updater", [
+        $this->logger->info('starting updater', [
             'iterations' => $input->getOption('iterations'),
         ]);
         do {
             try {
-                $this->logger->info("updating feeds", ['batch' => $this->batchCount]);
+                $this->logger->info('updating feeds', ['batch' => $this->batchCount]);
                 $feeds = $this->feedRepository->getFeedsToUpdate();
                 foreach ($feeds as $feed) {
                     $this->updateFeed($feed);
@@ -75,7 +75,7 @@ class UpdateCommand extends Command
                     'batch' => $this->batchCount,
                 ]);
                 $this->logger->debug('error updating feeds', [
-                    'trace' => $e->getTraceAsString()
+                    'trace' => $e->getTraceAsString(),
                 ]);
             }
         } while ($this->keepRunning(intval($input->getOption('iterations'))));
@@ -86,13 +86,13 @@ class UpdateCommand extends Command
     protected function updateFeed(Feed $feed): void
     {
         try {
-            $this->logger->info("updating", ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
+            $this->logger->info('updating', ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
             $result = $this->feedIo->read($feed->getUrl(), $feed, $feed->getLastModified());
             if (count($result->getFeed()) > 0) {
                 foreach ($result->getFeed() as $item) {
                     $this->saveItem($feed, $item);
                 }
-                $this->logger->info("items fetched", ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
+                $this->logger->info('items fetched', ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
                 $feed->setResult($result);
                 $this->feedRepository->save($feed);
             }
@@ -103,16 +103,15 @@ class UpdateCommand extends Command
                 'feed' => $feed->getSlug(),
             ]);
             $this->logger->debug('feed not updated', [
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
         }
-
     }
 
     protected function saveItem(Feed $feed, Item $item): void
     {
         try {
-            $this->logger->info("saving item", ['batch' => $this->batchCount, 'feed' => $feed->getSlug(), 'item' => $item->getLink()]);
+            $this->logger->info('saving item', ['batch' => $this->batchCount, 'feed' => $feed->getSlug(), 'item' => $item->getLink()]);
             $item->setFeedId($feed->getId());
             $item->setLanguage($feed->getLanguage());
             $this->saveThumbnail($item);
@@ -124,7 +123,7 @@ class UpdateCommand extends Command
                     'feed' => $feed->getSlug(),
             ]);
             $this->logger->debug('error saving item', [
-                    'trace' => $e->getTraceAsString()
+                    'trace' => $e->getTraceAsString(),
             ]);
         }
     }
@@ -134,6 +133,7 @@ class UpdateCommand extends Command
         if ($item->hasMedia()) {
             foreach ($item->getMedias() as $media) {
                 $item->setThumbnail($media->getUrl());
+
                 return;
             }
         }
@@ -143,14 +143,14 @@ class UpdateCommand extends Command
     {
         if ($this->batchCount > $iterations) {
             $this->logger->notice("iteration limit reached ({$iterations}), stopping", ['batch' => $this->batchCount]);
+
             return false;
         }
 
-        $this->logger->info("finished, waiting", ['batch' => $this->batchCount]);
-        $this->batchCount++;
+        $this->logger->info('finished, waiting', ['batch' => $this->batchCount]);
+        ++$this->batchCount;
         sleep(self::WAIT);
 
         return true;
     }
-
 }

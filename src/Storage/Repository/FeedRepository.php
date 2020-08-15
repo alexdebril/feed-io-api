@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Storage\Repository;
 
@@ -40,6 +42,7 @@ class FeedRepository extends AbstractRepository
 
     /**
      * @param array<string> $statuses
+     *
      * @return Cursor<Feed>
      */
     public function getFeedsToUpdate(array $statuses = [Feed\Status::ACCEPTED, Feed\Status::APPROVED]): Cursor
@@ -54,7 +57,6 @@ class FeedRepository extends AbstractRepository
     }
 
     /**
-     * @param string $status
      * @return Cursor<Feed>
      */
     public function getFeedsByStatus(string $status): Cursor
@@ -66,8 +68,6 @@ class FeedRepository extends AbstractRepository
     }
 
     /**
-     * @param int $start
-     * @param int $limit
      * @return Cursor<Feed>
      */
     public function getFeeds(int $start, int $limit): Cursor
@@ -84,8 +84,9 @@ class FeedRepository extends AbstractRepository
     public function save(Feed $feed): UpdateResult
     {
         if (is_null($feed->getUrl())) {
-            throw new \UnexpectedValueException("feed URL cannot be null");
+            throw new \UnexpectedValueException('feed URL cannot be null');
         }
+
         return $this->getCollection()->updateOne(
             ['url' => $feed->getUrl()],
             ['$set' => $feed],

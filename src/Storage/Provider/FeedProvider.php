@@ -1,14 +1,13 @@
-<?php declare(strict_types=1);
+<?php
 
+declare(strict_types=1);
 
 namespace App\Storage\Provider;
-
 
 use App\Storage\Repository\FeedRepository;
 
 class FeedProvider
 {
-
     const feedRedisKey = 'cache:feed:[slug]';
 
     const feedListRedisKey = 'cache:feeds:[start]:[limit]';
@@ -31,23 +30,24 @@ class FeedProvider
     {
         $key = $this->getFeedListCacheKey($start, $limit);
         $feeds = $this->redis->get($key);
-        if ( ! $feeds ) {
+        if (!$feeds) {
             $cursor = $this->repository->getFeeds($start, $limit);
             $feeds = [];
-            foreach($cursor as $feed) {
+            foreach ($cursor as $feed) {
                 $feeds[] = $feed;
             }
             $this->redis->set($key, serialize($feeds), $this->getCacheTtl());
         } else {
             $feeds = unserialize($feeds);
         }
+
         return $feeds;
     }
 
     private function getFeedListCacheKey(int $start, int $limit)
     {
         return str_replace(
-            [ '[start]', '[limit]'],
+            ['[start]', '[limit]'],
             [$start, $limit],
             self::feedListRedisKey
         );
@@ -57,5 +57,4 @@ class FeedProvider
     {
         return self::cacheTtl;
     }
-
 }

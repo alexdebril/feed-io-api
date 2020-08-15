@@ -1,5 +1,6 @@
-<?php declare(strict_types=1);
+<?php
 
+declare(strict_types=1);
 
 namespace App\Storage\Entity\Feed;
 
@@ -58,7 +59,7 @@ class Status
     private function set(string $value): void
     {
         $values = (new \ReflectionClass(self::class))->getConstants();
-        if (! in_array($value, $values)) {
+        if (!in_array($value, $values)) {
             throw new \UnexpectedValueException("{$value} is not a valid status");
         }
         $this->value = $value;

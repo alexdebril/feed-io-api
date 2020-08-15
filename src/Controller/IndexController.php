@@ -2,12 +2,11 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Content;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class IndexController
 {
-
     private $content;
 
     /**

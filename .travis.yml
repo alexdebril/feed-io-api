@@ -1,0 +1,16 @@
+language: bash
+
+services:
+  - docker
+
+before_script:
+  - make build
+  - make start
+
+script:
+  - make test
+  - make lint
+  - make stan
+
+after_script:
+  - make stop

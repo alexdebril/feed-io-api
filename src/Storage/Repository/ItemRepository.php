@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Storage\Repository;
 
@@ -24,9 +26,6 @@ class ItemRepository extends AbstractRepository
     }
 
     /**
-     * @param ObjectIdInterface $feedId
-     * @param int $start
-     * @param int $limit
      * @return Cursor<Item>
      */
     public function getItemsFromFeed(ObjectIdInterface $feedId, int $start = 0, int $limit = 10): Cursor
@@ -37,7 +36,7 @@ class ItemRepository extends AbstractRepository
                 'typeMap' => ['root' => Item::class],
                 'skip' => $start,
                 'limit' => $limit,
-                'sort' => ['lastModified' => -1]
+                'sort' => ['lastModified' => -1],
             ]
         );
     }
@@ -45,8 +44,9 @@ class ItemRepository extends AbstractRepository
     public function save(Item $item): InsertOneResult
     {
         if (is_null($item->getPublicId())) {
-            throw new \UnexpectedValueException("publicId cannot be null");
+            throw new \UnexpectedValueException('publicId cannot be null');
         }
+
         return $this->getCollection()->insertOne($item);
     }
 

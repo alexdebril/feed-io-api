@@ -6,7 +6,6 @@ use Symfony\Component\Yaml\Yaml;
 
 class Content
 {
-
     private string $filename;
 
     /**

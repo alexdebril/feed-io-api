@@ -1,12 +1,13 @@
-<?php declare(strict_types=1);
+<?php
 
+declare(strict_types=1);
 
 namespace App\Storage\Entity;
 
+use App\Storage\Entity\Feed\Status;
 use FeedIo\Feed as BaseFeed;
 use FeedIo\Feed\ItemInterface;
 use FeedIo\Reader\Result;
-use App\Storage\Entity\Feed\Status;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\Serializable;
 use MongoDB\BSON\Unserializable;
@@ -69,11 +70,13 @@ class Feed extends BaseFeed implements Serializable, Unserializable
 
     /**
      * @param array<mixed> $checks
+     *
      * @return $this
      */
     public function setChecks(array $checks): Feed
     {
         $this->checks = $checks;
+
         return $this;
     }
 
@@ -95,6 +98,7 @@ class Feed extends BaseFeed implements Serializable, Unserializable
     public function setSlug(string $slug = null): Feed
     {
         $this->slug = $slug;
+
         return $this;
     }
 

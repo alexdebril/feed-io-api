@@ -1,23 +1,24 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Controller;
 
 use App\Message\NewFeed;
 use App\Storage\Entity\Feed\Status;
 use App\Storage\Provider\FeedProvider;
+use App\Storage\Repository\FeedRepository;
 use FeedIo\FeedInterface;
 use FeedIo\FeedIo;
-use App\Storage\Repository\FeedRepository;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Smells like code refactoring : many private methods in there, could be isolated in dedicated components
+ * Smells like code refactoring : many private methods in there, could be isolated in dedicated components.
  */
 class FeedController
 {
-
     private FeedIo $feedIo;
 
     private string $allowedOrigin;
@@ -31,7 +32,7 @@ class FeedController
         $this->redis = $redis;
     }
 
-    public function consume(Request $request) : JsonResponse
+    public function consume(Request $request): JsonResponse
     {
         try {
             return $this->newJsonResponse(
@@ -44,7 +45,7 @@ class FeedController
         }
     }
 
-    public function discover(Request $request) : JsonResponse
+    public function discover(Request $request): JsonResponse
     {
         try {
             return $this->newJsonResponse(
@@ -66,6 +67,7 @@ class FeedController
                     new NewFeed($url)
                 );
             }
+
             return $this->newJsonResponse(
                 ['ok' => $ok]
             );
@@ -83,6 +85,7 @@ class FeedController
             );
             $feed->setLanguage($this->extract($request, 'language'));
             $repository->save($feed);
+
             return $this->newJsonResponse(['ok' => true]);
         } catch (\Exception $e) {
             return $this->newJsonError($e);
@@ -93,6 +96,7 @@ class FeedController
     {
         try {
             $feeds = $provider->getList($start, $limit);
+
             return $this->newJsonResponse(['feeds' => $feeds]);
         } catch (\Exception $e) {
             return $this->newJsonError($e);
@@ -105,7 +109,7 @@ class FeedController
             $data,
             200,
             [
-                'Access-Control-Allow-Origin' => $this->allowedOrigin
+                'Access-Control-Allow-Origin' => $this->allowedOrigin,
             ]
         );
     }
@@ -120,26 +124,26 @@ class FeedController
             JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
             [
                 'Access-Control-Allow-Origin' => $this->allowedOrigin,
-                'Content-Type' => 'application/problem+json'
+                'Content-Type' => 'application/problem+json',
             ]
         );
     }
 
-    private function extractUrl(Request $request) : string
+    private function extractUrl(Request $request): string
     {
         return $this->extract($request, 'url');
     }
 
-    private function extractSlug(Request $request) : string
+    private function extractSlug(Request $request): string
     {
         return $this->extract($request, 'slug');
     }
 
-    private function extract(Request $request, string $param) : string
+    private function extract(Request $request, string $param): string
     {
         $data = json_decode($request->getContent(), true);
 
-        if ( isset($data[$param]) ) {
+        if (isset($data[$param])) {
             return $data[$param];
         }
 
@@ -149,19 +153,19 @@ class FeedController
     private function canProcess(string $url): bool
     {
         $url = filter_var($url, FILTER_VALIDATE_URL);
-        if ( ! $url ) {
+        if (!$url) {
             return false;
         }
 
-        if ($this->redis->get('url_' . $url)) {
+        if ($this->redis->get('url_'.$url)) {
             return false;
         }
 
-        $this->redis->set('url_' . $url, time());
+        $this->redis->set('url_'.$url, time());
 
         try {
             $feed = $this->feedIo->read($url)->getFeed();
-            if ( ! $feed instanceof FeedInterface ) {
+            if (!$feed instanceof FeedInterface) {
                 throw new \RuntimeException();
             }
         } catch (\Exception $e) {
