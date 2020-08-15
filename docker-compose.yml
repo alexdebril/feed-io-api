@@ -32,7 +32,7 @@ services:
 
   consumer:
     build: docker/dev/cli
-    #restart: always
+    restart: always
     command: "./bin/console messenger:consume async-new-feed -vv"
     environment:
       APP_ENV: dev
