@@ -23,6 +23,6 @@ feed_accept:
     controller: App\Controller\FeedController::accept
 
 feed_list:
-    path: /feed/list
+    path: /feed/list/{start<\d+>?0}/{limit<\d+>?10}
     methods: ["GET"]
     controller: App\Controller\FeedController::getList

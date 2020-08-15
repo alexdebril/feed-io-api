@@ -44,7 +44,7 @@ class UpdateCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('app:update')
@@ -78,7 +78,7 @@ class UpdateCommand extends Command
                     'trace' => $e->getTraceAsString()
                 ]);
             }
-        } while ($this->keepRunning((int) $input->getOption('iterations')));
+        } while ($this->keepRunning(intval($input->getOption('iterations'))));
 
         return 0;
     }

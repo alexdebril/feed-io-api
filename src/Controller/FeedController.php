@@ -89,10 +89,10 @@ class FeedController
         }
     }
 
-    public function getList(Request $request, FeedProvider $provider): JsonResponse
+    public function getList(int $start, int $limit, FeedProvider $provider): JsonResponse
     {
         try {
-            $feeds = $provider->getList();
+            $feeds = $provider->getList($start, $limit);
             return $this->newJsonResponse(['feeds' => $feeds]);
         } catch (\Exception $e) {
             return $this->newJsonError($e);

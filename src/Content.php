@@ -7,9 +7,12 @@ use Symfony\Component\Yaml\Yaml;
 class Content
 {
 
-    private $filename;
+    private string $filename;
 
-    private $content;
+    /**
+     * @var array<mixed>|null
+     */
+    private ? array $content = null;
 
     public function __construct(string $filename)
     {
@@ -17,10 +20,9 @@ class Content
     }
 
     /**
-     * [getContent description]
-     * @return [type] [description]
+     * @return array<mixed>
      */
-    public function getContent()
+    public function getContent(): array
     {
         if (is_null($this->content)) {
             $this->content = Yaml::parseFile($this->filename);

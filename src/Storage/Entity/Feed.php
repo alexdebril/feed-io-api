@@ -98,6 +98,15 @@ class Feed extends BaseFeed implements Serializable, Unserializable
         return $this;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->getTitle(),
+            'slug' => $this->getSlug(),
+            'status' => $this->getStatus()->getValue(),
+        ];
+    }
+
     /**
      * @return array<mixed>
      */
