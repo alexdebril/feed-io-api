@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Message\NewFeed;
 use App\Storage\Entity\Feed\Status;
+use App\Storage\Provider\FeedProvider;
 use FeedIo\FeedInterface;
 use FeedIo\FeedIo;
 use App\Storage\Repository\FeedRepository;
@@ -23,14 +24,11 @@ class FeedController
 
     private \Redis $redis;
 
-    private MessageBusInterface $bus;
-
-    public function __construct(FeedIo $feedIo, string $allowedOrigin, \Redis $redis, MessageBusInterface $bus)
+    public function __construct(FeedIo $feedIo, string $allowedOrigin, \Redis $redis)
     {
         $this->feedIo = $feedIo;
         $this->allowedOrigin = $allowedOrigin;
         $this->redis = $redis;
-        $this->bus = $bus;
     }
 
     public function consume(Request $request) : JsonResponse
@@ -59,12 +57,12 @@ class FeedController
         }
     }
 
-    public function submit(Request $request): JsonResponse
+    public function submit(Request $request, MessageBusInterface $bus): JsonResponse
     {
         try {
             $url = $this->extractUrl($request);
             if ($ok = $this->canProcess($url)) {
-                $this->bus->dispatch(
+                $bus->dispatch(
                     new NewFeed($url)
                 );
             }
@@ -86,6 +84,16 @@ class FeedController
             $feed->setLanguage($this->extract($request, 'language'));
             $repository->save($feed);
             return $this->newJsonResponse(['ok' => true]);
+        } catch (\Exception $e) {
+            return $this->newJsonError($e);
+        }
+    }
+
+    public function getList(Request $request, FeedProvider $provider): JsonResponse
+    {
+        try {
+            $feeds = $provider->getList();
+            return $this->newJsonResponse(['feeds' => $feeds]);
         } catch (\Exception $e) {
             return $this->newJsonError($e);
         }

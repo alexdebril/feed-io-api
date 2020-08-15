@@ -21,3 +21,8 @@ feed_accept:
     path: /feed/accept
     methods: ["POST"]
     controller: App\Controller\FeedController::accept
+
+feed_list:
+    path: /feed/list
+    methods: ["GET"]
+    controller: App\Controller\FeedController::getList

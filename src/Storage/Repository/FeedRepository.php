@@ -65,6 +65,22 @@ class FeedRepository extends AbstractRepository
         );
     }
 
+    /**
+     * @param int $start
+     * @param int $limit
+     * @return Cursor<Feed>
+     */
+    public function getFeeds(int $start, int $limit): Cursor
+    {
+        return $this->getCollection()->find([],
+            [
+                'typeMap' => ['root' => Feed::class],
+                'skip' => $start,
+                'limit' => $limit,
+            ]
+        );
+    }
+
     public function save(Feed $feed): UpdateResult
     {
         if (is_null($feed->getUrl())) {
