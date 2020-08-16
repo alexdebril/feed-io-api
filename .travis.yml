@@ -17,6 +17,5 @@ before_script:
   - composer install
 
 script:
-  - composer src:lint
   - composer src:stan
   - composer src:test
