@@ -12,7 +12,7 @@ use MongoDB\UpdateResult;
 
 class FeedRepository extends AbstractRepository
 {
-    public function findOne(ObjectIdInterface $objectId): ? Feed
+    public function findOne(ObjectIdInterface $objectId): ?Feed
     {
         $feed = $this->getCollection()->findOne(
             ['_id' => $objectId],
@@ -26,7 +26,7 @@ class FeedRepository extends AbstractRepository
         return null;
     }
 
-    public function findOneBySlug(string $slug): ? Feed
+    public function findOneBySlug(string $slug): ?Feed
     {
         $feed = $this->getCollection()->findOne(
             ['slug' => $slug],

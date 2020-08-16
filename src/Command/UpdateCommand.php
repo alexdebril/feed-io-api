@@ -53,8 +53,7 @@ class UpdateCommand extends Command
                 'iterations', 'i',
                 InputOption::VALUE_OPTIONAL,
                 'number of iterations before leaving', self::DEFAULT_BATCH_LIMIT
-            )
-        ;
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -118,12 +117,12 @@ class UpdateCommand extends Command
             $this->itemRepository->save($item);
         } catch (\Exception $e) {
             $this->logger->warning('error saving item', [
-                    'error' => $e->getMessage(),
-                    'batch' => $this->batchCount,
-                    'feed' => $feed->getSlug(),
+                'error' => $e->getMessage(),
+                'batch' => $this->batchCount,
+                'feed' => $feed->getSlug(),
             ]);
             $this->logger->debug('error saving item', [
-                    'trace' => $e->getTraceAsString(),
+                'trace' => $e->getTraceAsString(),
             ]);
         }
     }
