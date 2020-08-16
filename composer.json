@@ -12,6 +12,7 @@
         "debril/rss-atom-bundle": "^5.0",
         "mongodb/mongodb": "^1.7",
         "symfony/console": "*",
+        "symfony/dotenv": "*",
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "5.1.*",
         "symfony/messenger": "5.1.*",
@@ -23,8 +24,7 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.16",
         "phpstan/phpstan": "^0.12.37",
-        "phpunit/phpunit": "^9.3",
-        "symfony/dotenv": "*"
+        "phpunit/phpunit": "^9.3"
     },
     "config": {
         "preferred-install": {
