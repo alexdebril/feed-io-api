@@ -1,0 +1,49 @@
+{
+	"info": {
+		"_postman_id": "efd4a31f-1e01-4f9c-846d-c54230ff464f",
+		"name": "feed-io-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "submit new feed",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "28495051-914b-4c46-bf23-833351540f25",
+						"exec": [
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include('{\"ok\":true}');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"url\": \"https://lemonde.fr/rss/une.xml\"\r\n}"
+				},
+				"url": {
+					"raw": "http://api:80/feed/submit",
+					"protocol": "http",
+					"host": [
+						"api"
+					],
+					"port": "80",
+					"path": [
+						"feed",
+						"submit"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

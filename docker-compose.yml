@@ -82,3 +82,10 @@ services:
   redis:
     image: redis
     hostname: redis
+
+  newman:
+    image: postman/newman_alpine33
+    links:
+      - nginx:api
+    volumes:
+      - ./Resources:/etc/postman

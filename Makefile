@@ -11,6 +11,10 @@ stop:
 shell:
 	docker-compose run cli bash
 
+test-api:
+	docker-compose run newman run /etc/postman/feed-io-api.postman_collection.json
+	docker-compose down --volumes --remove-orphans
+
 test:
 	docker-compose run cli composer src:test
 
