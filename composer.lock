@@ -77,16 +77,16 @@
         },
         {
             "name": "debril/feed-io",
-            "version": "v4.7.7",
+            "version": "v4.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alexdebril/feed-io.git",
-                "reference": "631b00858dcadb9c1ea30c40e6442b64518c2e92"
+                "reference": "2fe979f7e288fff334deaa0ddeaa1f229632ab6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexdebril/feed-io/zipball/631b00858dcadb9c1ea30c40e6442b64518c2e92",
-                "reference": "631b00858dcadb9c1ea30c40e6442b64518c2e92",
+                "url": "https://api.github.com/repos/alexdebril/feed-io/zipball/2fe979f7e288fff334deaa0ddeaa1f229632ab6e",
+                "reference": "2fe979f7e288fff334deaa0ddeaa1f229632ab6e",
                 "shasum": ""
             },
             "require": {
@@ -140,7 +140,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-08-06T12:17:03+00:00"
+            "time": "2020-08-17T13:46:18+00:00"
         },
         {
             "name": "debril/rss-atom-bundle",
