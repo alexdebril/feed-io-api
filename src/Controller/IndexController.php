@@ -4,19 +4,16 @@ namespace App\Controller;
 
 use App\Content;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController
 {
-    private $content;
 
-    /**
-     * @param Content $content [description]
-     */
-    public function __construct(Content $content)
-    {
-        $this->content = $content;
-    }
+    public function __construct(
+        private Content $content
+    ) {}
 
+    #[Route('/', name: 'index')]
     public function index()
     {
         return new JsonResponse(

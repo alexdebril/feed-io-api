@@ -2,7 +2,7 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
@@ -10,6 +10,7 @@
         "ext-redis": "*",
         "debril/feed-io": "^4.7",
         "debril/rss-atom-bundle": "^5.0",
+        "doctrine/annotations": "^1.11",
         "mongodb/mongodb": "^1.7",
         "symfony/console": "*",
         "symfony/dotenv": "*",

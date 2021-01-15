@@ -13,25 +13,23 @@ use FeedIo\FeedIo;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Smells like code refactoring : many private methods in there, could be isolated in dedicated components.
  */
+
+#[Route('/feed', name: 'feed_')]
 class FeedController
 {
-    private FeedIo $feedIo;
 
-    private string $allowedOrigin;
+    public function __construct(
+        private FeedIo $feedIo,
+        private string $allowedOrigin,
+        private \Redis $redis
+    ) {}
 
-    private \Redis $redis;
-
-    public function __construct(FeedIo $feedIo, string $allowedOrigin, \Redis $redis)
-    {
-        $this->feedIo = $feedIo;
-        $this->allowedOrigin = $allowedOrigin;
-        $this->redis = $redis;
-    }
-
+    #[Route('/consume', name: 'consume', methods: ['POST'])]
     public function consume(Request $request): JsonResponse
     {
         try {
@@ -45,6 +43,7 @@ class FeedController
         }
     }
 
+    #[Route('/discover', name: 'discover', methods: ['POST'])]
     public function discover(Request $request): JsonResponse
     {
         try {
@@ -58,6 +57,7 @@ class FeedController
         }
     }
 
+    #[Route('/submit', name: 'submit', methods: ['POST'])]
     public function submit(Request $request, MessageBusInterface $bus): JsonResponse
     {
         try {
@@ -76,6 +76,7 @@ class FeedController
         }
     }
 
+    #[Route('/accept', name: 'accept', methods: ['POST'])]
     public function accept(Request $request, FeedRepository $repository): JsonResponse
     {
         try {
@@ -92,6 +93,7 @@ class FeedController
         }
     }
 
+    #[Route('/list/{start<\d+>?0}/{limit<\d+>?10}', name: 'list', methods: ['GET'])]
     public function getList(int $start, int $limit, FeedProvider $provider): JsonResponse
     {
         try {
