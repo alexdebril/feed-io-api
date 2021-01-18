@@ -46,6 +46,9 @@ services:
     App\Storage\Repository\TopicRepository:
         alias: repository.topic
 
+    App\Storage\Repository\ResultRepository:
+        alias: repository.result
+
     MongoDB\Database:
         alias: mongo.database
 
@@ -57,6 +60,9 @@ services:
 
     repository.topic:
         class: App\Storage\Repository\TopicRepository
+
+    repository.result:
+        class: App\Storage\Repository\ResultRepository
 
     mongo.client:
         class: MongoDB\Client
