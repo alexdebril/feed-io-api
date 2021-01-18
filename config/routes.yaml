@@ -1,28 +1,3 @@
-index:
-    path: /
-    controller: App\Controller\IndexController::index
-
-feed_consume:
-    path: /feed/consume
-    methods: ["POST"]
-    controller: App\Controller\FeedController::consume
-
-feed_discover:
-    path: /feed/discover
-    methods: ["POST"]
-    controller: App\Controller\FeedController::discover
-
-feed_submit:
-    path: /feed/submit
-    methods: ["POST"]
-    controller: App\Controller\FeedController::submit
-
-feed_accept:
-    path: /feed/accept
-    methods: ["POST"]
-    controller: App\Controller\FeedController::accept
-
-feed_list:
-    path: /feed/list/{start<\d+>?0}/{limit<\d+>?10}
-    methods: ["GET"]
-    controller: App\Controller\FeedController::getList
+controllers:
+    resource: ../src/Controller/
+    type: annotation
