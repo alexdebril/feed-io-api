@@ -108,6 +108,14 @@ class UpdateCommand extends Command
             }
         } catch (ReadErrorException $readErrorException) {
             $this->saveResult($this->newFailureResult($readErrorException, $feed,), microtime(true) - $start);
+            $this->logger->warning('read error', [
+                'error' => $readErrorException->getMessage(),
+                'batch' => $this->batchCount,
+                'feed' => $feed->getSlug(),
+            ]);
+            $this->logger->debug('read error', [
+                'trace' => $readErrorException->getTraceAsString(),
+            ]);
         } catch (\Exception $e) {
             $this->logger->warning('feed not updated', [
                 'error' => $e->getMessage(),
