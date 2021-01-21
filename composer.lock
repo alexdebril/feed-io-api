@@ -81,16 +81,16 @@
         },
         {
             "name": "debril/feed-io",
-            "version": "v4.7.14",
+            "version": "v4.7.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alexdebril/feed-io.git",
-                "reference": "d975fd8422b68d724da65e26e470cc9e9c350372"
+                "reference": "8f2bc02157968e18c2e84ff0522aaf3ad2551d16"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexdebril/feed-io/zipball/d975fd8422b68d724da65e26e470cc9e9c350372",
-                "reference": "d975fd8422b68d724da65e26e470cc9e9c350372",
+                "url": "https://api.github.com/repos/alexdebril/feed-io/zipball/8f2bc02157968e18c2e84ff0522aaf3ad2551d16",
+                "reference": "8f2bc02157968e18c2e84ff0522aaf3ad2551d16",
                 "shasum": ""
             },
             "require": {
@@ -142,7 +142,7 @@
             ],
             "support": {
                 "issues": "https://github.com/alexdebril/feed-io/issues",
-                "source": "https://github.com/alexdebril/feed-io/tree/v4.7.14"
+                "source": "https://github.com/alexdebril/feed-io/tree/v4.7.15"
             },
             "funding": [
                 {
@@ -150,7 +150,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-01-20T17:48:50+00:00"
+            "time": "2021-01-21T16:37:00+00:00"
         },
         {
             "name": "debril/rss-atom-bundle",
@@ -6691,12 +6691,12 @@
             "version": "1.9.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
+                "url": "https://github.com/webmozarts/assert.git",
                 "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/bafc69caeb4d49c39fd0779086c03a3738cbb389",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/bafc69caeb4d49c39fd0779086c03a3738cbb389",
                 "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389",
                 "shasum": ""
             },
@@ -6734,8 +6734,8 @@
                 "validate"
             ],
             "support": {
-                "issues": "https://github.com/webmozart/assert/issues",
-                "source": "https://github.com/webmozart/assert/tree/master"
+                "issues": "https://github.com/webmozarts/assert/issues",
+                "source": "https://github.com/webmozarts/assert/tree/1.9.1"
             },
             "time": "2020-07-08T17:02:28+00:00"
         }

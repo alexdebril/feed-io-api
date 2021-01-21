@@ -9,7 +9,9 @@ use App\Storage\Entity\Item;
 use App\Storage\Repository\FeedRepository;
 use App\Storage\Repository\ItemRepository;
 use App\Storage\Repository\ResultRepository;
+use FeedIo\Adapter\HttpRequestException;
 use FeedIo\Adapter\NotFoundException;
+use FeedIo\Adapter\ServerErrorException;
 use FeedIo\FeedIo;
 use FeedIo\Reader\ReadErrorException;
 use FeedIo\Reader\Result;
@@ -92,11 +94,10 @@ class UpdateCommand extends Command
 
     protected function updateFeed(Feed $feed): void
     {
-        $start = microtime(true);
         try {
             $this->logger->info('updating', ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
             $result = $this->feedIo->read($feed->getUrl(), $feed, $feed->getLastModified());
-            $this->saveResult($this->newSuccessResult($result, $feed,),microtime(true) - $start);
+            $this->saveResult($this->newSuccessResult($result, $feed));
 
             if (count($result->getFeed()) > 0) {
                 foreach ($result->getFeed() as $item) {
@@ -106,18 +107,9 @@ class UpdateCommand extends Command
                 $feed->setResult($result);
                 $this->feedRepository->save($feed);
             }
-        } catch (ReadErrorException $readErrorException) {
-            $this->saveResult($this->newFailureResult($readErrorException, $feed,), microtime(true) - $start);
-            $this->logger->warning('read error', [
-                'error' => $readErrorException->getMessage(),
-                'batch' => $this->batchCount,
-                'feed' => $feed->getSlug(),
-            ]);
-            $this->logger->debug('read error', [
-                'trace' => $readErrorException->getTraceAsString(),
-            ]);
         } catch (\Exception $e) {
-            $this->logger->warning('feed not updated', [
+            $this->saveResult($this->newFailureResult($e, $feed));
+            $this->logger->error('feed not updated', [
                 'error' => $e->getMessage(),
                 'batch' => $this->batchCount,
                 'feed' => $feed->getSlug(),
@@ -132,7 +124,8 @@ class UpdateCommand extends Command
     {
         $res = new \App\Storage\Entity\Result();
         $res
-            ->setStatusCode($result->getResponse()->isModified() ? 200:304)
+            ->setStatusCode($result->getResponse()->getStatusCode())
+            ->setDurationInMs($result->getResponse()->getDuration())
             ->setSuccess(true)
             ->setItemCount(count($feed))
             ->setLastModified($feed->getLastModified())
@@ -142,12 +135,13 @@ class UpdateCommand extends Command
         return $res;
     }
 
-    protected function newFailureResult(ReadErrorException $readErrorException, Feed $feed): \App\Storage\Entity\Result
+    protected function newFailureResult(\Exception $exception, Feed $feed): \App\Storage\Entity\Result
     {
-        $rootException = $readErrorException->getPrevious();
+        $rootException = $exception->getPrevious();
         $res = new \App\Storage\Entity\Result();
         $res
-            ->setStatusCode($rootException instanceof NotFoundException ? 404:500)
+            ->setStatusCode($rootException instanceof ServerErrorException ? $rootException->getResponse()->getStatusCode():200)
+            ->setDurationInMs($rootException instanceof HttpRequestException ? $rootException->getDuration():0)
             ->setSuccess(false)
             ->setItemCount(0)
             ->setLastModified($feed->getLastModified())
@@ -157,9 +151,8 @@ class UpdateCommand extends Command
         return $res;
     }
 
-    protected function saveResult(\App\Storage\Entity\Result $result, float $duration): void
-    {
-        $result->setDurationInMs(intval(round($duration, 3) * 1000));
+    protected function saveResult(\App\Storage\Entity\Result $result): void
+    {;
         $this->resultRepository->save($result);
     }
 
