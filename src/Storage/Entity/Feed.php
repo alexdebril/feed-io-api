@@ -108,6 +108,10 @@ class Feed extends BaseFeed implements Serializable, Unserializable
             'title' => $this->getTitle(),
             'slug' => $this->getSlug(),
             'status' => $this->getStatus()->getValue(),
+            'lastModified' => $this->getLastModified()?->format(\DATE_ATOM),
+            'nextUpdate' => $this->nextUpdate?->format(\DATE_ATOM),
+            'publicId' => $this->getPublicId(),
+            'language' => $this->getLanguage(),
         ];
     }
 
