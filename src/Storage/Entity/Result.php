@@ -186,7 +186,11 @@ class Result implements Serializable, Unserializable, \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
+            'eventDate' => $this->getEventDate()?->format(\DATE_ATOM),
             'duration' => $this->getDurationInMs(),
+            'statusCode' => $this->getStatusCode(),
+            'itemCount' => $this->getItemCount(),
+            'success' => $this->isSuccess() ? 'true':'false',
             'lastModified' => $this->getLastModified()?->format(\DATE_ATOM),
         ];
     }
