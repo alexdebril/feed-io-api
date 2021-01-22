@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Storage\Entity;
 
-
-
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\Serializable;
 use MongoDB\BSON\Unserializable;
 use MongoDB\BSON\UTCDateTime;
 
-class Result implements Serializable, Unserializable
+class Result implements Serializable, Unserializable, \JsonSerializable
 {
 
     protected ?ObjectId $id;
@@ -183,6 +181,14 @@ class Result implements Serializable, Unserializable
             ->setItemCount($data['itemCount'])
             ->setStatusCode($data['statusCode'])
             ->setSuccess($data['success']);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'duration' => $this->getDurationInMs(),
+            'lastModified' => $this->getLastModified()?->format(\DATE_ATOM),
+        ];
     }
 
 }
