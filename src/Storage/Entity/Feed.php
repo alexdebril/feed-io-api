@@ -48,7 +48,10 @@ class Feed extends BaseFeed implements Serializable, Unserializable
 
     public function setNextUpdate(\DateTime $nextUpdate): Feed
     {
-        $this->nextUpdate = $nextUpdate;
+        $this->nextUpdate = max(
+            $nextUpdate,
+            new \DateTime(sprintf('+%ssec', Result\UpdateStats::DEFAULT_MIN_DELAY))
+        );
 
         return $this;
     }

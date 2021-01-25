@@ -16,15 +16,10 @@ class FeedProvider
 
     const defaultLimit = 20;
 
-    private \Redis $redis;
-
-    private FeedRepository $repository;
-
-    public function __construct(\Redis $redis, FeedRepository $repository)
-    {
-        $this->redis = $redis;
-        $this->repository = $repository;
-    }
+    public function __construct(
+        private \Redis $redis,
+        private FeedRepository $repository
+    ) {}
 
     public function getList(int $start = 0, int $limit = self::defaultLimit)
     {
@@ -44,7 +39,7 @@ class FeedProvider
         return $feeds;
     }
 
-    private function getFeedListCacheKey(int $start, int $limit)
+    private function getFeedListCacheKey(int $start, int $limit): array|string
     {
         return str_replace(
             ['[start]', '[limit]'],

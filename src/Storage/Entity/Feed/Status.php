@@ -8,8 +8,6 @@ class Status
 {
     const PENDING = 'PENDING';
 
-    const APPROVED = 'APPROVED';
-
     const REJECTED = 'REJECTED';
 
     const ACCEPTED = 'ACCEPTED';
@@ -39,11 +37,6 @@ class Status
     public function isAccepted(): bool
     {
         return $this->is(self::ACCEPTED);
-    }
-
-    public function isApproved(): bool
-    {
-        return $this->is(self::APPROVED);
     }
 
     public function isPending(): bool

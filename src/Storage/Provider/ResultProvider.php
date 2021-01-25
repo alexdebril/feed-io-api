@@ -11,6 +11,8 @@ class ResultProvider
 {
     const resultRedisKey = 'cache:results:[slug]:[start]:[limit]';
 
+    const statsRedisKey = 'cache:stats:[slug]';
+
     const cacheTtl = 60 * 3;
 
     const defaultLimit = 20;
@@ -40,6 +42,32 @@ class ResultProvider
         return $results;
     }
 
+    public function getStats(string $slug)
+    {
+        $key = $this->getStatsCacheKey($slug);
+        $stats = $this->redis->get($key);
+        if (!$stats) {
+            $stats = ['http' => [], 'avg' => [], 'success' => []];
+            $feed = $this->feedRepository->findOneBySlug($slug);
+            $avg = iterator_to_array($this->resultRepository->getAveragedStats($feed));
+            $stats['avg'] = [
+                'duration' => round($avg[0]['duration'], 2),
+                'count' => round($avg[0]['count'], 2),
+            ];
+            foreach ($this->resultRepository->getHttpStats($feed) as $result) {
+                $stats['http'][$result['_id']] = $result['count'];
+            }
+            foreach ($this->resultRepository->getSuccessStats($feed) as $result) {
+                $stats['success'][$result['_id']?'true':'false'] = $result['count'];
+            }
+            $this->redis->set($key, serialize($stats), $this->getCacheTtl());
+        } else {
+            $stats = unserialize($stats);
+        }
+
+        return $stats;
+    }
+
     private function getCacheKey(string $slug, int $start, int $limit): array|string
     {
         return str_replace(
@@ -47,6 +75,11 @@ class ResultProvider
             [$slug, $start, $limit],
             self::resultRedisKey
         );
+    }
+
+    private function getStatsCacheKey(string $slug): array|string
+    {
+        return str_replace(['[slug]'], [$slug], self::statsRedisKey);
     }
 
     private function getCacheTtl(): int

@@ -19,4 +19,13 @@ class ResultController
             200
         );
     }
+
+    #[Route('/stats/{slug}', name: 'stats')]
+    public function getStats(string $slug, ResultProvider $provider): JsonResponse
+    {
+        return new JsonResponse(
+            $provider->getStats($slug),
+            200
+        );
+    }
 }
