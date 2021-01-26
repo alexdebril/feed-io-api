@@ -11,7 +11,7 @@ class ResultProvider
 {
     const resultRedisKey = 'cache:results:[slug]:[start]:[limit]';
 
-    const statsRedisKey = 'cache:stats:[slug]';
+    const statsRedisKey = 'cache:stats:[slug]:[days]';
 
     const cacheTtl = 60 * 3;
 
@@ -42,29 +42,30 @@ class ResultProvider
         return $results;
     }
 
-    public function getStats(string $slug)
+    public function getStats(string $slug, int $days)
     {
-        $key = $this->getStatsCacheKey($slug);
+        $since = new \DateTime(sprintf('-%sdays', $days));
+        $key = $this->getStatsCacheKey($slug, $days);
         $stats = $this->redis->get($key);
         if (!$stats) {
             $stats = ['http' => [], 'avg' => [], 'success' => []];
             $feed = $this->feedRepository->findOneBySlug($slug);
-            $avg = iterator_to_array($this->resultRepository->getAveragedStats($feed));
+            $avg = iterator_to_array($this->resultRepository->getAveragedStats($feed, $since));
+            $average = isset($avg[0]) ? $avg[0] : ['duration' => 0, 'count' => 0];
             $stats['avg'] = [
-                'duration' => round($avg[0]['duration'], 2),
-                'count' => round($avg[0]['count'], 2),
+                'duration' => round($average['duration'], 2),
+                'count' => round($average['count'], 2),
             ];
-            foreach ($this->resultRepository->getHttpStats($feed) as $result) {
+            foreach ($this->resultRepository->getHttpStats($feed, $since) as $result) {
                 $stats['http'][$result['_id']] = $result['count'];
             }
-            foreach ($this->resultRepository->getSuccessStats($feed) as $result) {
+            foreach ($this->resultRepository->getSuccessStats($feed, $since) as $result) {
                 $stats['success'][$result['_id']?'true':'false'] = $result['count'];
             }
             $this->redis->set($key, serialize($stats), $this->getCacheTtl());
         } else {
             $stats = unserialize($stats);
         }
-
         return $stats;
     }
 
@@ -77,9 +78,9 @@ class ResultProvider
         );
     }
 
-    private function getStatsCacheKey(string $slug): array|string
+    private function getStatsCacheKey(string $slug, int $days): array|string
     {
-        return str_replace(['[slug]'], [$slug], self::statsRedisKey);
+        return str_replace(['[slug]', '[days]'], [$slug, $days], self::statsRedisKey);
     }
 
     private function getCacheTtl(): int

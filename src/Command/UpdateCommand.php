@@ -161,8 +161,6 @@ class UpdateCommand extends Command
         try {
             $this->logger->info('saving item', ['batch' => $this->batchCount, 'feed' => $feed->getSlug(), 'item' => $item->getLink()]);
             $item->setFeedId($feed->getId());
-            $item->setLanguage($feed->getLanguage());
-            $this->saveThumbnail($item);
             $this->itemRepository->save($item);
         } catch (\Exception $e) {
             $this->logger->warning('error saving item', [
@@ -173,17 +171,6 @@ class UpdateCommand extends Command
             $this->logger->debug('error saving item', [
                 'trace' => $e->getTraceAsString(),
             ]);
-        }
-    }
-
-    protected function saveThumbnail(Item $item): void
-    {
-        if ($item->hasMedia()) {
-            foreach ($item->getMedias() as $media) {
-                $item->setThumbnail($media->getUrl());
-
-                return;
-            }
         }
     }
 

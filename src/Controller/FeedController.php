@@ -84,7 +84,6 @@ class FeedController
             $feed->setStatus(
                 new Status(Status::ACCEPTED)
             );
-            $feed->setLanguage($this->extract($request, 'language'));
             $repository->save($feed);
 
             return $this->newJsonResponse(['ok' => true]);
@@ -110,9 +109,6 @@ class FeedController
         return new JsonResponse(
             $data,
             200,
-            [
-                'Access-Control-Allow-Origin' => $this->allowedOrigin,
-            ]
         );
     }
 
@@ -125,7 +121,6 @@ class FeedController
             ],
             JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
             [
-                'Access-Control-Allow-Origin' => $this->allowedOrigin,
                 'Content-Type' => 'application/problem+json',
             ]
         );

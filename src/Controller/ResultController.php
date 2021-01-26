@@ -12,7 +12,7 @@ class ResultController
 {
 
     #[Route('/list/{slug}', name: 'list')]
-    public function getResults(string $slug, ResultProvider $provider): JsonResponse
+    public function getResults(ResultProvider $provider, string $slug): JsonResponse
     {
         return new JsonResponse(
             $provider->getResults($slug),
@@ -20,11 +20,11 @@ class ResultController
         );
     }
 
-    #[Route('/stats/{slug}', name: 'stats')]
-    public function getStats(string $slug, ResultProvider $provider): JsonResponse
+    #[Route('/stats/{slug}/{days}', name: 'stats')]
+    public function getStats(ResultProvider $provider, string $slug, int $days = 1): JsonResponse
     {
         return new JsonResponse(
-            $provider->getStats($slug),
+            $provider->getStats($slug, $days),
             200
         );
     }

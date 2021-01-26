@@ -67,7 +67,7 @@ class Item extends BaseItem implements Serializable, Unserializable
     public function bsonSerialize(): array
     {
         $properties = get_object_vars($this);
-        unset($properties['id']);
+        unset($properties['id'], $properties['medias'], $properties['elements'], $properties['author'], $properties['host']);
 
         foreach ($properties as $name => $property) {
             if ($property instanceof \DateTime) {
@@ -89,12 +89,9 @@ class Item extends BaseItem implements Serializable, Unserializable
         if ($data['lastModified'] instanceof UTCDateTime) {
             $this->setLastModified($data['lastModified']->toDateTime());
         }
-        $this->setLanguage($data['language'] ?? null);
         $this->setTitle($data['title']);
         $this->setLink($data['link']);
-        $this->setDescription($data['description']);
         $this->setPublicId($data['publicId']);
-        $this->setThumbnail($data['thumbnail'] ?? null);
 
         if (is_array($data['categories'])) {
             foreach ($data['categories'] as $category) {

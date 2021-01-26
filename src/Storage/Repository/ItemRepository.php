@@ -28,13 +28,12 @@ class ItemRepository extends AbstractRepository
     /**
      * @return Cursor<Item>
      */
-    public function getItemsFromFeed(ObjectIdInterface $feedId, int $start = 0, int $limit = 10): Cursor
+    public function getItems(int $limit = 10): Cursor
     {
         return $this->getCollection()->find(
-            ['feedId' => $feedId],
+            [],
             [
                 'typeMap' => ['root' => Item::class],
-                'skip' => $start,
                 'limit' => $limit,
                 'sort' => ['lastModified' => -1],
             ]

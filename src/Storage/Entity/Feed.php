@@ -107,6 +107,9 @@ class Feed extends BaseFeed implements Serializable, Unserializable
 
     public function toArray(): array
     {
+        $checks = $this->checks;
+        $checks['date'] = $checks['modifiedSince'];
+        unset($checks['modifiedSince']);
         return [
             'title' => $this->getTitle(),
             'slug' => $this->getSlug(),
@@ -114,7 +117,9 @@ class Feed extends BaseFeed implements Serializable, Unserializable
             'lastModified' => $this->getLastModified()?->format(\DATE_ATOM),
             'nextUpdate' => $this->nextUpdate?->format(\DATE_ATOM),
             'publicId' => $this->getPublicId(),
+            'url' => $this->getUrl(),
             'language' => $this->getLanguage(),
+            'checks' => $checks,
         ];
     }
 
@@ -124,8 +129,7 @@ class Feed extends BaseFeed implements Serializable, Unserializable
     public function bsonSerialize(): array
     {
         $properties = get_object_vars($this);
-        unset($properties['items']);
-        unset($properties['id']);
+        unset($properties['id'], $properties['items'], $properties['elements'], $properties['logo'], $properties['host'], $properties['ns']);
 
         foreach ($properties as $name => $property) {
             if ($property instanceof \DateTime) {

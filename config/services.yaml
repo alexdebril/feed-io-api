@@ -10,6 +10,7 @@ parameters:
     mongodb_database: "%env(MONGODB_DATABASE)%"
     redis_host: "%env(REDIS_HOST)%"
     redis_port: "%env(REDIS_PORT)%"
+    debril.rss_atom.provider.class: 'App\Storage\Provider\ItemProvider'
 
 services:
     # default configuration for services in *this* file

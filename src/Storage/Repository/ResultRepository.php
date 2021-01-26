@@ -6,6 +6,7 @@ namespace App\Storage\Repository;
 
 use App\Storage\Entity\Feed;
 use App\Storage\Entity\Result;
+use MongoDB\BSON\UTCDateTime;
 use MongoDB\Driver\Cursor;
 use MongoDB\InsertOneResult;
 
@@ -27,10 +28,10 @@ class ResultRepository extends AbstractRepository
         );
     }
 
-    public function getAveragedStats(Feed $feed)
+    public function getAveragedStats(Feed $feed, \DateTime $dateTime): \Traversable
     {
         return $this->getCollection()->aggregate([
-            ['$match' => ['feedId' => $feed->getId()]],
+            ['$match' => ['feedId' => $feed->getId(), 'eventDate' => ['$gt' => new UTCDateTime($dateTime)]]],
             ['$group' => [
                 '_id' => '$feedId',
                 'duration' => ['$avg' => '$durationInMs'],
@@ -39,10 +40,10 @@ class ResultRepository extends AbstractRepository
         ]);
     }
 
-    public function getHttpStats(Feed $feed)
+    public function getHttpStats(Feed $feed, \DateTime $dateTime)
     {
         return $this->getCollection()->aggregate([
-            ['$match' => ['feedId' => $feed->getId()]],
+            ['$match' => ['feedId' => $feed->getId(), 'eventDate' => ['$gt' => new UTCDateTime($dateTime)]]],
             ['$group' => [
                 '_id' => '$statusCode',
                 'count' => ['$sum' => 1],
@@ -50,10 +51,10 @@ class ResultRepository extends AbstractRepository
         ]);
     }
 
-    public function getSuccessStats(Feed $feed)
+    public function getSuccessStats(Feed $feed, \DateTime $dateTime)
     {
         return $this->getCollection()->aggregate([
-            ['$match' => ['feedId' => $feed->getId()]],
+            ['$match' => ['feedId' => $feed->getId(), 'eventDate' => ['$gt' => new UTCDateTime($dateTime)]]],
             ['$group' => [
                 '_id' => '$success',
                 'count' => ['$sum' => 1],
