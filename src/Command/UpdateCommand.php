@@ -126,6 +126,10 @@ class UpdateCommand extends Command
         $res
             ->setStatusCode($result->getResponse()->getStatusCode())
             ->setDurationInMs($result->getResponse()->getDuration())
+            ->setMinIntervals($result->getUpdateStats()->getMinInterval())
+            ->setMedianIntervals($result->getUpdateStats()->getMedianInterval())
+            ->setAverageIntervals($result->getUpdateStats()->getAverageInterval())
+            ->setMaxIntervals($result->getUpdateStats()->getMaxInterval())
             ->setSuccess(true)
             ->setItemCount(count($feed))
             ->setLastModified($feed->getLastModified())
@@ -144,6 +148,7 @@ class UpdateCommand extends Command
             ->setDurationInMs($rootException instanceof HttpRequestException ? $rootException->getDuration():0)
             ->setSuccess(false)
             ->setItemCount(0)
+            ->setError($exception->getMessage())
             ->setLastModified($feed->getLastModified())
             ->setEventDate(new \DateTime())
             ->setFeedId($feed->getId());

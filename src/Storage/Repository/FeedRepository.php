@@ -44,7 +44,7 @@ class FeedRepository extends AbstractRepository
      * @param string $status
      * @return Cursor
      */
-    public function getFeedsToUpdate(string $status  = Feed\Status::ACCEPTED): Cursor
+    public function getFeedsToUpdate(string $status = Feed\Status::ACCEPTED): Cursor
     {
         return $this->getCollection()->find(
             [
