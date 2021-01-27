@@ -84,6 +84,7 @@ class FeedController
             $feed->setStatus(
                 new Status(Status::ACCEPTED)
             );
+            $feed->setLanguage($this->extract($request, 'language'));
             $repository->save($feed);
 
             return $this->newJsonResponse(['ok' => true]);

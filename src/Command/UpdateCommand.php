@@ -166,6 +166,7 @@ class UpdateCommand extends Command
         try {
             $this->logger->info('saving item', ['batch' => $this->batchCount, 'feed' => $feed->getSlug(), 'item' => $item->getLink()]);
             $item->setFeedId($feed->getId());
+            $item->setLanguage($feed->getLanguage());
             $this->itemRepository->save($item);
         } catch (\Exception $e) {
             $this->logger->warning('error saving item', [
