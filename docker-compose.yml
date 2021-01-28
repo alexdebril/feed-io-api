@@ -79,6 +79,7 @@ services:
       MONGO_INITDB_DATABASE: feedio_api
     volumes:
       - ./Resources/database/init.js:/docker-entrypoint-initdb.d/init.js
+      - './data/db:/data/db'
 
   redis:
     image: redis
