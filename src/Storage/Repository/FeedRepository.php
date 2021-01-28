@@ -71,7 +71,8 @@ class FeedRepository extends AbstractRepository
      */
     public function getFeeds(int $start, int $limit): Cursor
     {
-        return $this->getCollection()->find([],
+        return $this->getCollection()->find(
+            ['status' => ['$ne' => Feed\Status::REJECTED]],
             [
                 'typeMap' => ['root' => Feed::class],
                 'skip' => $start,
