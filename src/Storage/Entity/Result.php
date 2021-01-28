@@ -283,10 +283,10 @@ class Result implements Serializable, Unserializable, JsonSerializable
             ->setLastModified($data['lastModified']->toDateTime())
             ->setItemCount($data['itemCount'])
             ->setStatusCode($data['statusCode'])
-            ->setMinIntervals($data['minIntervals'])
-            ->setMaxIntervals($data['maxIntervals'])
-            ->setAverageIntervals($data['averageIntervals'])
-            ->setMedianIntervals($data['medianIntervals'])
+            ->setMinIntervals(intval($data['minIntervals']))
+            ->setMaxIntervals(intval($data['maxIntervals']))
+            ->setAverageIntervals(intval($data['averageIntervals']))
+            ->setMedianIntervals(intval($data['medianIntervals']))
             ->setSuccess($data['success']);
         if (isset($data['error'])) {
             $this->setError($data['error']);

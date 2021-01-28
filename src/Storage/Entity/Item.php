@@ -92,7 +92,7 @@ class Item extends BaseItem implements Serializable, Unserializable
         $this->setTitle($data['title']);
         $this->setLink($data['link']);
         $this->setPublicId($data['publicId']);
-        $this->setLanguage($data['language']);
+        $this->setLanguage($data['language'] ?? null);
 
         if (is_array($data['categories'])) {
             foreach ($data['categories'] as $category) {
