@@ -8,11 +8,10 @@ use App\Storage\Repository\FeedRepository;
 
 class FeedProvider
 {
-    const feedRedisKey = 'cache:feed:[slug]';
 
     const feedListRedisKey = 'cache:feeds:[start]:[limit]';
 
-    const cacheTtl = 60 * 3;
+    const cacheTtl = 10;
 
     const defaultLimit = 20;
 

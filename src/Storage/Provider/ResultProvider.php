@@ -13,7 +13,7 @@ class ResultProvider
 
     const statsRedisKey = 'cache:stats:[slug]:[days]';
 
-    const cacheTtl = 60 * 3;
+    const cacheTtl = 60;
 
     const defaultLimit = 20;
 
