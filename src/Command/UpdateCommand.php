@@ -97,6 +97,11 @@ class UpdateCommand extends Command
         try {
             $this->logger->info('updating', ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
             $result = $this->feedIo->read($feed->getUrl(), $feed, $feed->getLastModified());
+            $this->logger->debug('result fetched', [
+                'batch' => $this->batchCount,
+                'feed' => $feed->getSlug(),
+                'last-modified' => $feed->getLastModified(),
+            ]);
             $this->saveResult($this->newSuccessResult($result, $feed));
 
             if (count($result->getFeed()) > 0) {
