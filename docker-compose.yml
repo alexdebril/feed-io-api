@@ -15,11 +15,17 @@ services:
       MONGODB_DATABASE: "feedio_api"
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      WS_URL: http://ws:8080/item
     links:
       - redis
       - mongo
     volumes:
     - .:/var/www/html
+
+  ws:
+    image: alexdebril/feed-io-api-ws:latest
+    ports:
+      - 8000:8080
 
   nginx:
     depends_on:
@@ -42,6 +48,7 @@ services:
       MONGODB_DATABASE: "feedio_api"
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      WS_URL: http://ws:8080/item
     links:
       - redis
       - mongo
@@ -56,6 +63,7 @@ services:
       APP_ENV: dev
       MONGODB_DSN: "mongodb://mongo:27017"
       MONGODB_DATABASE: "feedio_api"
+      WS_URL: http://ws:8080/item
     links:
       - mongo
     volumes:

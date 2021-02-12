@@ -11,12 +11,14 @@ parameters:
     redis_host: "%env(REDIS_HOST)%"
     redis_port: "%env(REDIS_PORT)%"
     debril.rss_atom.provider.class: 'App\Storage\Provider\ItemProvider'
+    ws_url: "%env(WS_URL)%"
 
 services:
     # default configuration for services in *this* file
     _defaults:
         bind:
             $allowedOrigin: '%allowed_origin%'
+            $host: '%ws_url%'
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         public: false       # Allows optimizing the container by removing unused services; this also means
@@ -50,6 +52,9 @@ services:
     App\Storage\Repository\ResultRepository:
         alias: repository.result
 
+    GuzzleHttp\Client:
+        alias: guzzle.client
+
     MongoDB\Database:
         alias: mongo.database
 
@@ -68,6 +73,10 @@ services:
     mongo.client:
         class: MongoDB\Client
         arguments: ["%mongodb_dsn%"]
+
+    handler.item:
+        class: App\Handler\NewItemHandler
+        arguments: ["@guzzle.client", "%ws_url%"]
 
     mongo.database:
         class: MongoDB\Database

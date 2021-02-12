@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Handler\NewItemHandler;
 use App\Storage\Entity\Feed;
 use App\Storage\Entity\Item;
 use App\Storage\Repository\FeedRepository;
@@ -27,30 +28,16 @@ class UpdateCommand extends Command
 
     const DEFAULT_BATCH_LIMIT = 16;
 
-    private LoggerInterface $logger;
-
-    private FeedIo $feedIo;
-
-    private FeedRepository $feedRepository;
-
-    private ItemRepository $itemRepository;
-
-    private ResultRepository $resultRepository;
-
     private int $batchCount = 1;
 
     public function __construct(
-        LoggerInterface $logger,
-        FeedIo $feedIo,
-        FeedRepository $feedRepository,
-        ItemRepository $itemRepository,
-        ResultRepository $resultRepository
+        private LoggerInterface $logger,
+        private FeedIo $feedIo,
+        private FeedRepository $feedRepository,
+        private ItemRepository $itemRepository,
+        private ResultRepository $resultRepository,
+        private NewItemHandler $itemHandler
     ) {
-        $this->logger = $logger;
-        $this->feedIo = $feedIo;
-        $this->feedRepository = $feedRepository;
-        $this->itemRepository = $itemRepository;
-        $this->resultRepository = $resultRepository;
         parent::__construct();
     }
 
@@ -106,6 +93,7 @@ class UpdateCommand extends Command
 
             if (count($result->getFeed()) > 0) {
                 foreach ($result->getFeed() as $item) {
+                    $this->itemHandler->notify($feed, $item);
                     $this->saveItem($feed, $item);
                 }
                 $this->logger->info('items fetched', ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
