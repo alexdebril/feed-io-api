@@ -110,6 +110,9 @@ class FeedController
         return new JsonResponse(
             $data,
             200,
+            [
+                'Access-Control-Allow-Origin' => $this->allowedOrigin,
+            ]
         );
     }
 
