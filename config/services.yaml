@@ -9,6 +9,7 @@ parameters:
     mongodb_dsn: "%env(MONGODB_DSN)%"
     mongodb_database: "%env(MONGODB_DATABASE)%"
     redis_host: "%env(REDIS_HOST)%"
+    redis_pass: "%env(REDIS_PASS)%"
     redis_port: "%env(REDIS_PORT)%"
     debril.rss_atom.provider.class: 'App\Storage\Provider\ItemProvider'
     ws_url: "%env(WS_URL)%"
@@ -88,3 +89,5 @@ services:
         calls:
             - method: connect
               arguments: ["%redis_host%", "%redis_port%"]
+            - method: auth
+              arguments: ["%redis_pass%"]

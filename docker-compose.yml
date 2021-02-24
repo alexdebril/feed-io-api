@@ -14,6 +14,7 @@ services:
       MONGODB_DSN: "mongodb://mongo:27017"
       MONGODB_DATABASE: "feedio_api"
       REDIS_HOST: redis
+      REDIS_PASS: secretpass
       REDIS_PORT: 6379
       WS_URL: http://ws:8080/item
     links:
@@ -43,10 +44,11 @@ services:
     command: "./bin/console messenger:consume async-new-feed -vv"
     environment:
       APP_ENV: dev
-      MESSENGER_TRANSPORT_DSN: "redis://redis:6379/newfeeds"
+      MESSENGER_TRANSPORT_DSN: "redis://secretpass@redis:6379/newfeeds"
       MONGODB_DSN: "mongodb://mongo:27017"
       MONGODB_DATABASE: "feedio_api"
       REDIS_HOST: redis
+      REDIS_PASS: secretpass
       REDIS_PORT: 6379
       WS_URL: http://ws:8080/item
     links:
@@ -92,3 +94,4 @@ services:
   redis:
     image: redis
     hostname: redis
+    command: redis-server --requirepass secretpass
