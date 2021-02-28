@@ -24,9 +24,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateCommand extends Command
 {
-    const WAIT = 60;
+    const WAIT = 10;
 
-    const DEFAULT_BATCH_LIMIT = 16;
+    const DEFAULT_BATCH_LIMIT = 1024;
 
     private int $batchCount = 1;
 
@@ -150,7 +150,7 @@ class UpdateCommand extends Command
     }
 
     protected function saveResult(\App\Storage\Entity\Result $result): void
-    {;
+    {
         $this->resultRepository->save($result);
     }
 
@@ -181,7 +181,7 @@ class UpdateCommand extends Command
             return false;
         }
 
-        $this->logger->info('finished, waiting', ['batch' => $this->batchCount]);
+        $this->logger->info('finished, waiting', ['batch' => $this->batchCount, 'mem_usage' => memory_get_usage(true), 'peek_usage' => memory_get_peak_usage(true)]);
         ++$this->batchCount;
         sleep(self::WAIT);
 
