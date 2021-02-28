@@ -105,6 +105,8 @@ class UpdateCommand extends Command
             $this->feedRepository->save($feed);
         } catch (\Exception $e) {
             $this->saveResult($this->newFailureResult($e, $feed));
+            $feed->setNextUpdate(new \DateTime('+1day'));
+            $this->feedRepository->save($feed);
             $this->logger->error('feed not updated', [
                 'error' => $e->getMessage(),
                 'batch' => $this->batchCount,
