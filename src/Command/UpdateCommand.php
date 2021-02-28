@@ -98,8 +98,11 @@ class UpdateCommand extends Command
                 }
                 $this->logger->info('items fetched', ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
                 $feed->setResult($result);
-                $this->feedRepository->save($feed);
+            } else {
+                $feed->setNextUpdate(new \DateTime('+30min'));
+                $this->logger->info('empty feed, waiting for 30 minutes', ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
             }
+            $this->feedRepository->save($feed);
         } catch (\Exception $e) {
             $this->saveResult($this->newFailureResult($e, $feed));
             $this->logger->error('feed not updated', [
