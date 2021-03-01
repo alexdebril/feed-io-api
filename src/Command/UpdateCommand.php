@@ -24,8 +24,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateCommand extends Command
 {
-    const WAIT = 10;
-
     const DEFAULT_BATCH_LIMIT = 1024;
 
     private int $batchCount = 1;
@@ -82,30 +80,35 @@ class UpdateCommand extends Command
     protected function updateFeed(Feed $feed): void
     {
         try {
-            $this->logger->info('updating', ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
+            $this->logger->info('updating', [
+                'batch' => $this->batchCount,
+                'feed' => $feed->getSlug(),
+                'last-modified' => $feed->getLastModified()->format(\DATE_ATOM)]
+            );
             $result = $this->feedIo->read($feed->getUrl(), $feed, $feed->getLastModified());
             $this->logger->debug('result fetched', [
                 'batch' => $this->batchCount,
                 'feed' => $feed->getSlug(),
-                'last-modified' => $feed->getLastModified(),
+                'last-modified' => $feed->getLastModified()->format(\DATE_ATOM),
             ]);
             $this->saveResult($this->newSuccessResult($result, $feed));
 
-            if (count($result->getFeed()) > 0) {
+            if (($numItems = count($result->getFeed())) > 0) {
+                $feed->setResult($result);
+                $this->feedRepository->save($feed);
+                $this->logger->info('items fetched', ['batch' => $this->batchCount, 'feed' => $feed->getSlug(), 'items' => $numItems, 'last-modified' => $feed->getLastModified()->format(\DATE_ATOM)]);
                 foreach ($result->getFeed() as $item) {
                     $this->itemHandler->notify($feed, $item);
                     $this->saveItem($feed, $item);
                 }
-                $this->logger->info('items fetched', ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
-                $feed->setResult($result);
             } else {
                 $feed->setNextUpdate(new \DateTime('+10min'));
+                $this->feedRepository->save($feed);
                 $this->logger->info('empty feed, waiting for 10 minutes', ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
             }
-            $this->feedRepository->save($feed);
         } catch (\Exception $e) {
             $this->saveResult($this->newFailureResult($e, $feed));
-            $feed->setNextUpdate(new \DateTime('+1day'));
+            $feed->setNextUpdate(new \DateTime('+1hour'));
             $this->feedRepository->save($feed);
             $this->logger->error('feed not updated', [
                 'error' => $e->getMessage(),
@@ -162,7 +165,12 @@ class UpdateCommand extends Command
     protected function saveItem(Feed $feed, Item $item): void
     {
         try {
-            $this->logger->info('saving item', ['batch' => $this->batchCount, 'feed' => $feed->getSlug(), 'item' => $item->getLink()]);
+            $this->logger->info('saving item', [
+                'batch' => $this->batchCount,
+                'feed' => $feed->getSlug(),
+                'item' => $item->getLink(),
+                'date' => $item->getLastModified()->format(\DATE_ATOM)]
+            );
             $item->setFeedId($feed->getId());
             $item->setLanguage($feed->getLanguage());
             $this->itemRepository->save($item);
@@ -186,9 +194,19 @@ class UpdateCommand extends Command
             return false;
         }
 
-        $this->logger->info('finished, waiting', ['batch' => $this->batchCount, 'mem_usage' => memory_get_usage(true), 'peek_usage' => memory_get_peak_usage(true)]);
         ++$this->batchCount;
-        sleep(self::WAIT);
+        $feed = $this->feedRepository->getNextToUpdate();
+        $duration = 1 + $feed->getNextUpdate()->getTimestamp() - time();
+        $this->logger->info('finished, waiting', [
+            'batch' => $this->batchCount,
+            'mem_usage' => memory_get_usage(true),
+            'peek_usage' => memory_get_peak_usage(true),
+            'next_feed' => $feed->getSlug(),
+            'next_update' => $feed->getNextUpdate()->format(\DATE_ATOM),
+            'wait' => $duration,
+            ]
+        );
+        sleep($duration);
 
         return true;
     }

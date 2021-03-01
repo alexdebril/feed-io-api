@@ -26,6 +26,22 @@ class FeedRepository extends AbstractRepository
         return null;
     }
 
+    public function getNextToUpdate(): ?Feed
+    {
+        $feed = $this->getCollection()->findOne(
+            ['status' => Feed\Status::ACCEPTED],
+            [
+                'sort' => ['nextUpdate' => 1],
+                'typeMap' => ['root' => Feed::class]]
+        );
+
+        if ($feed instanceof Feed) {
+            return $feed;
+        }
+
+        return null;
+    }
+
     public function findOneBySlug(string $slug): ?Feed
     {
         $feed = $this->getCollection()->findOne(
