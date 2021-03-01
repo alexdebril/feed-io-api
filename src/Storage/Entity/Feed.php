@@ -159,7 +159,7 @@ class Feed extends BaseFeed implements Serializable, Unserializable
             $this->setLastModified($data['lastModified']->toDateTime());
         }
         if ($data['nextUpdate'] instanceof UTCDateTime) {
-            $this->setNextUpdate($data['nextUpdate']->toDateTime());
+            $this->nextUpdate = $data['nextUpdate']->toDateTime();
         }
         $this->setTitle($data['title']);
         $this->setLink($data['link']);
