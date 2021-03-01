@@ -48,10 +48,7 @@ class Feed extends BaseFeed implements Serializable, Unserializable
 
     public function setNextUpdate(\DateTime $nextUpdate): Feed
     {
-        $this->nextUpdate = max(
-            $nextUpdate,
-            new \DateTime(sprintf('+%ssec', Result\UpdateStats::DEFAULT_MIN_DELAY))
-        );
+        $this->nextUpdate = $nextUpdate;
 
         return $this;
     }
@@ -61,9 +58,9 @@ class Feed extends BaseFeed implements Serializable, Unserializable
         return $this->nextUpdate;
     }
 
-    public function setResult(Result $result): Feed
+    public function setResult(Result $result, int $minDelay): Feed
     {
-        $this->setNextUpdate($result->getNextUpdate());
+        $this->setNextUpdate($result->getNextUpdate($minDelay));
 
         return $this;
     }

@@ -26,6 +26,8 @@ class UpdateCommand extends Command
 {
     const DEFAULT_BATCH_LIMIT = 1024;
 
+    const DEFAULT_MIN_DELAY = 900;
+
     private int $batchCount = 1;
 
     public function __construct(
@@ -48,7 +50,13 @@ class UpdateCommand extends Command
                 'iterations', 'i',
                 InputOption::VALUE_OPTIONAL,
                 'number of iterations before leaving', self::DEFAULT_BATCH_LIMIT
-            );
+            )
+            ->addOption(
+                'min-delay', 'm',
+                InputOption::VALUE_OPTIONAL,
+                'minimum delay before polling a feed', self::DEFAULT_MIN_DELAY
+            )
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -61,7 +69,7 @@ class UpdateCommand extends Command
                 $this->logger->info('updating feeds', ['batch' => $this->batchCount]);
                 $feeds = $this->feedRepository->getFeedsToUpdate();
                 foreach ($feeds as $feed) {
-                    $this->updateFeed($feed);
+                    $this->updateFeed($feed, intval($input->getOption('min-delay')));
                 }
             } catch (\Throwable $e) {
                 $this->logger->error('error updating feeds', [
@@ -77,24 +85,24 @@ class UpdateCommand extends Command
         return 0;
     }
 
-    protected function updateFeed(Feed $feed): void
+    protected function updateFeed(Feed $feed, int $minDelay): void
     {
         try {
             $this->logger->info('updating', [
                 'batch' => $this->batchCount,
                 'feed' => $feed->getSlug(),
-                'last-modified' => $feed->getLastModified()->format(\DATE_ATOM)]
+                'last-modified' => $feed->getLastModified()?->format(\DATE_ATOM)]
             );
             $result = $this->feedIo->read($feed->getUrl(), $feed, $feed->getLastModified());
             $this->logger->debug('result fetched', [
                 'batch' => $this->batchCount,
                 'feed' => $feed->getSlug(),
-                'last-modified' => $feed->getLastModified()->format(\DATE_ATOM),
+                'last-modified' => $feed->getLastModified()?->format(\DATE_ATOM),
             ]);
             $this->saveResult($this->newSuccessResult($result, $feed));
 
             if (($numItems = count($result->getFeed())) > 0) {
-                $feed->setResult($result);
+                $feed->setResult($result, $minDelay);
                 $this->feedRepository->save($feed);
                 $this->logger->info('items fetched', ['batch' => $this->batchCount, 'feed' => $feed->getSlug(), 'items' => $numItems, 'last-modified' => $feed->getLastModified()->format(\DATE_ATOM)]);
                 foreach ($result->getFeed() as $item) {
@@ -169,7 +177,7 @@ class UpdateCommand extends Command
                 'batch' => $this->batchCount,
                 'feed' => $feed->getSlug(),
                 'item' => $item->getLink(),
-                'date' => $item->getLastModified()->format(\DATE_ATOM)]
+                'date' => $item->getLastModified()?->format(\DATE_ATOM)]
             );
             $item->setFeedId($feed->getId());
             $item->setLanguage($feed->getLanguage());
@@ -206,7 +214,7 @@ class UpdateCommand extends Command
             'wait' => $duration,
             ]
         );
-        sleep($duration);
+        sleep(max($duration, 10));
 
         return true;
     }
