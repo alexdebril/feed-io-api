@@ -82,23 +82,27 @@ class UpdateCommand extends Command
     protected function updateFeed(Feed $feed): void
     {
         try {
-            $this->logger->info('updating', ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
+            $this->logger->info('updating', [
+                'batch' => $this->batchCount,
+                'feed' => $feed->getSlug(),
+                'last-modified' => $feed->getLastModified()->format(\DATE_ATOM)]
+            );
             $result = $this->feedIo->read($feed->getUrl(), $feed, $feed->getLastModified());
             $this->logger->debug('result fetched', [
                 'batch' => $this->batchCount,
                 'feed' => $feed->getSlug(),
-                'last-modified' => $feed->getLastModified(),
+                'last-modified' => $feed->getLastModified()->format(\DATE_ATOM),
             ]);
             $this->saveResult($this->newSuccessResult($result, $feed));
 
-            if (count($result->getFeed()) > 0) {
+            if (($numItems = count($result->getFeed())) > 0) {
                 $feed->setResult($result);
                 $this->feedRepository->save($feed);
+                $this->logger->info('items fetched', ['batch' => $this->batchCount, 'feed' => $feed->getSlug(), 'items' => $numItems, 'last-modified' => $feed->getLastModified()->format(\DATE_ATOM)]);
                 foreach ($result->getFeed() as $item) {
                     $this->itemHandler->notify($feed, $item);
                     $this->saveItem($feed, $item);
                 }
-                $this->logger->info('items fetched', ['batch' => $this->batchCount, 'feed' => $feed->getSlug()]);
             } else {
                 $feed->setNextUpdate(new \DateTime('+10min'));
                 $this->feedRepository->save($feed);
@@ -163,7 +167,12 @@ class UpdateCommand extends Command
     protected function saveItem(Feed $feed, Item $item): void
     {
         try {
-            $this->logger->info('saving item', ['batch' => $this->batchCount, 'feed' => $feed->getSlug(), 'item' => $item->getLink()]);
+            $this->logger->info('saving item', [
+                'batch' => $this->batchCount,
+                'feed' => $feed->getSlug(),
+                'item' => $item->getLink(),
+                'date' => $item->getLastModified()->format(\DATE_ATOM)]
+            );
             $item->setFeedId($feed->getId());
             $item->setLanguage($feed->getLanguage());
             $this->itemRepository->save($item);
