@@ -56,6 +56,11 @@ class Feed extends BaseFeed implements Serializable, Unserializable
         return $this;
     }
 
+    public function getNextUpdate(): \DateTime
+    {
+        return $this->nextUpdate;
+    }
+
     public function setResult(Result $result): Feed
     {
         $this->setNextUpdate($result->getNextUpdate());

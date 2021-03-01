@@ -24,8 +24,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateCommand extends Command
 {
-    const WAIT = 10;
-
     const DEFAULT_BATCH_LIMIT = 1024;
 
     private int $batchCount = 1;
@@ -196,9 +194,19 @@ class UpdateCommand extends Command
             return false;
         }
 
-        $this->logger->info('finished, waiting', ['batch' => $this->batchCount, 'mem_usage' => memory_get_usage(true), 'peek_usage' => memory_get_peak_usage(true)]);
         ++$this->batchCount;
-        sleep(self::WAIT);
+        $feed = $this->feedRepository->getNextToUpdate();
+        $duration = 1 + $feed->getNextUpdate()->getTimestamp() - time();
+        $this->logger->info('finished, waiting', [
+            'batch' => $this->batchCount,
+            'mem_usage' => memory_get_usage(true),
+            'peek_usage' => memory_get_peak_usage(true),
+            'next_feed' => $feed->getSlug(),
+            'next_update' => $feed->getNextUpdate()->format(\DATE_ATOM),
+            'wait' => $duration,
+            ]
+        );
+        sleep($duration);
 
         return true;
     }
