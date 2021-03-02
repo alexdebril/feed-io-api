@@ -8,6 +8,7 @@ use App\Storage\Entity\Item;
 use MongoDB\BSON\ObjectIdInterface;
 use MongoDB\Driver\Cursor;
 use MongoDB\InsertOneResult;
+use MongoDB\UpdateResult;
 
 class ItemRepository extends AbstractRepository
 {
@@ -40,13 +41,20 @@ class ItemRepository extends AbstractRepository
         );
     }
 
-    public function save(Item $item): InsertOneResult
+    public function save(Item $item): UpdateResult
     {
         if (is_null($item->getPublicId())) {
             throw new \UnexpectedValueException('publicId cannot be null');
         }
 
-        return $this->getCollection()->insertOne($item);
+        return $this->getCollection()->updateOne(
+            [
+                'feedId' => $item->getFeedId(),
+                'publicId' => $item->getPublicId()
+            ],
+            ['$set' => $item],
+            ['upsert' => true]
+        );
     }
 
     protected function getCollectionName(): string
