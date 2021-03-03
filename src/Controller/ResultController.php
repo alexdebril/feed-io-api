@@ -11,12 +11,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class ResultController
 {
 
+    public function __construct(
+        private string $allowedOrigin,
+    ) {}
+
     #[Route('/list/{slug}', name: 'list')]
     public function getResults(ResultProvider $provider, string $slug): JsonResponse
     {
         return new JsonResponse(
             $provider->getResults($slug),
-            200
+            200,
+            ['Access-Control-Allow-Origin' => $this->allowedOrigin]
         );
     }
 
@@ -25,7 +30,8 @@ class ResultController
     {
         return new JsonResponse(
             $provider->getStats($slug, $days),
-            200
+            200,
+            ['Access-Control-Allow-Origin' => $this->allowedOrigin]
         );
     }
 }
