@@ -22,6 +22,7 @@ class ResultRepository extends AbstractRepository
         return $this->getCollection()->find(['feedId' => $feed->getId()],
             [
                 'typeMap' => ['root' => Result::class],
+                'sort' => ['eventDate' => -1],
                 'skip' => $start,
                 'limit' => $limit,
             ]
