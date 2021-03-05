@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Smells like code refactoring : many private methods in there, could be isolated in dedicated components.
  */
 
-#[Route('/feeds', name: 'feeds_')]
+#[Route('/feed', name: 'feed_')]
 class FeedController
 {
 
