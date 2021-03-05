@@ -19,7 +19,7 @@ class Feed extends BaseFeed implements Serializable, Unserializable
 
     protected Status $status;
 
-    protected \DateTime $nextUpdate;
+    protected ?\DateTime $nextUpdate;
 
     protected ?string $slug;
 

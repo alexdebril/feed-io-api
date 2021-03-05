@@ -38,7 +38,7 @@ class FeedProvider
         return $feeds;
     }
 
-    private function getFeedListCacheKey(int $start, int $limit): array|string
+    private function getFeedListCacheKey(int $start, int $limit): string
     {
         return str_replace(
             ['[start]', '[limit]'],

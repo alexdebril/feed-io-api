@@ -57,7 +57,7 @@ class ItemProvider implements FeedProviderInterface
         return $items;
     }
 
-    private function getCacheKey(int $limit): array|string
+    private function getCacheKey(int $limit): string
     {
         return str_replace(['[limit]'], [$limit], self::itemRedisKey);
     }

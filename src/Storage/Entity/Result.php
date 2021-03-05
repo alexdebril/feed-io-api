@@ -19,9 +19,9 @@ class Result implements Serializable, Unserializable, JsonSerializable
 
     protected ObjectId $feedId;
 
-    protected DateTime $eventDate;
+    protected ?DateTime $eventDate;
 
-    protected DateTime $lastModified;
+    protected ?DateTime $lastModified;
 
     protected ?string $error;
 
@@ -62,7 +62,7 @@ class Result implements Serializable, Unserializable, JsonSerializable
     /**
      * @return DateTime
      */
-    public function getEventDate(): DateTime
+    public function getEventDate(): ?DateTime
     {
         return $this->eventDate;
     }
@@ -77,180 +77,110 @@ class Result implements Serializable, Unserializable, JsonSerializable
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
-    public function getLastModified(): DateTime
+    public function getLastModified(): ?DateTime
     {
         return $this->lastModified;
     }
 
-    /**
-     * @param DateTime $lastModified
-     * @return Result
-     */
     public function setLastModified(DateTime $lastModified): Result
     {
         $this->lastModified = $lastModified;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isSuccess(): bool
     {
         return $this->success;
     }
 
-    /**
-     * @param bool $success
-     * @return Result
-     */
     public function setSuccess(bool $success): Result
     {
         $this->success = $success;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getDurationInMs(): int
     {
         return $this->durationInMs;
     }
 
-    /**
-     * @param int $durationInMs
-     * @return Result
-     */
     public function setDurationInMs(int $durationInMs): Result
     {
         $this->durationInMs = $durationInMs;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getItemCount(): int
     {
         return $this->itemCount;
     }
 
-    /**
-     * @param int $itemCount
-     * @return Result
-     */
     public function setItemCount(int $itemCount): Result
     {
         $this->itemCount = $itemCount;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
-    /**
-     * @param int $statusCode
-     * @return Result
-     */
     public function setStatusCode(int $statusCode): Result
     {
         $this->statusCode = $statusCode;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getMinIntervals(): int
     {
         return $this->minIntervals;
     }
 
-    /**
-     * @param int $minIntervals
-     * @return Result
-     */
     public function setMinIntervals(int $minIntervals): Result
     {
         $this->minIntervals = $minIntervals;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getMedianIntervals(): int
     {
         return $this->medianIntervals;
     }
 
-    /**
-     * @param int $medianIntervals
-     * @return Result
-     */
     public function setMedianIntervals(int $medianIntervals): Result
     {
         $this->medianIntervals = $medianIntervals;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAverageIntervals(): int
     {
         return $this->averageIntervals;
     }
 
-    /**
-     * @param int $averageIntervals
-     * @return Result
-     */
     public function setAverageIntervals(int $averageIntervals): Result
     {
         $this->averageIntervals = $averageIntervals;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getMaxIntervals(): int
     {
         return $this->maxIntervals;
     }
 
-    /**
-     * @param int $maxIntervals
-     * @return Result
-     */
     public function setMaxIntervals(int $maxIntervals): Result
     {
         $this->maxIntervals = $maxIntervals;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getError(): ?string
     {
         return $this->error;
     }
 
-    /**
-     * @param string|null $error
-     * @return Result
-     */
     public function setError(?string $error): Result
     {
         $this->error = $error;

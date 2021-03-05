@@ -69,7 +69,7 @@ class ResultProvider
         return $stats;
     }
 
-    private function getCacheKey(string $slug, int $start, int $limit): array|string
+    private function getCacheKey(string $slug, int $start, int $limit): string
     {
         return str_replace(
             ['[slug]', '[start]', '[limit]'],
@@ -78,7 +78,7 @@ class ResultProvider
         );
     }
 
-    private function getStatsCacheKey(string $slug, int $days): array|string
+    private function getStatsCacheKey(string $slug, int $days): string
     {
         return str_replace(['[slug]', '[days]'], [$slug, $days], self::statsRedisKey);
     }

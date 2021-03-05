@@ -26,9 +26,6 @@ class ItemRepository extends AbstractRepository
         return null;
     }
 
-    /**
-     * @return Cursor<Item>
-     */
     public function getItems(int $limit = 10): Cursor
     {
         return $this->getCollection()->find(
