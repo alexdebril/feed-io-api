@@ -9,13 +9,13 @@ use App\Storage\Repository\ResultRepository;
 
 class ResultProvider
 {
-    const resultRedisKey = 'cache:results:[slug]:[start]:[limit]';
+    const resultRedisKey = 'cache:results:[slug]:[limit]';
 
     const statsRedisKey = 'cache:stats:[slug]:[days]';
 
     const cacheTtl = 60;
 
-    const defaultLimit = 20;
+    const defaultLimit = 100;
 
     public function __construct(
         private \Redis $redis,
@@ -23,13 +23,13 @@ class ResultProvider
         private ResultRepository $resultRepository,
     ) {}
 
-    public function getResults(string $slug, int $start = 0, int $limit = self::defaultLimit)
+    public function getResults(string $slug, int $limit = self::defaultLimit)
     {
-        $key = $this->getCacheKey($slug, $start, $limit);
+        $key = $this->getCacheKey($slug, $limit);
         $results = $this->redis->get($key);
         if (!$results) {
             $feed = $this->feedRepository->findOneBySlug($slug);
-            $cursor = $this->resultRepository->getResults($feed, $start, $limit);
+            $cursor = $this->resultRepository->getResults($feed, $limit);
             $results = [];
             foreach ($cursor as $result) {
                 $results[] = $result;
@@ -69,11 +69,11 @@ class ResultProvider
         return $stats;
     }
 
-    private function getCacheKey(string $slug, int $start, int $limit): string
+    private function getCacheKey(string $slug, int $limit): string
     {
         return str_replace(
-            ['[slug]', '[start]', '[limit]'],
-            [$slug, $start, $limit],
+            ['[slug]', '[limit]'],
+            [$slug, $limit],
             self::resultRedisKey
         );
     }

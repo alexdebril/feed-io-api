@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Smells like code refactoring : many private methods in there, could be isolated in dedicated components.
  */
 
-#[Route('/feed', name: 'feed_')]
+#[Route('/feeds', name: 'feeds_')]
 class FeedController
 {
 
@@ -97,9 +97,10 @@ class FeedController
     public function getList(int $start, int $limit, FeedProvider $provider): JsonResponse
     {
         try {
-            $feeds = $provider->getList($start, $limit);
-
-            return $this->newJsonResponse(['feeds' => $feeds]);
+            return $this->newJsonResponse([
+                'feeds' => $provider->getList($start, $limit),
+                'count' => $provider->getCount(),
+            ]);
         } catch (\Exception $e) {
             return $this->newJsonError($e);
         }

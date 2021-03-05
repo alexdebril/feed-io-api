@@ -7,7 +7,7 @@ use App\Storage\Provider\ResultProvider;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/result', name: 'result_')]
+#[Route('/results', name: 'results_')]
 class ResultController
 {
 
@@ -19,7 +19,7 @@ class ResultController
     public function getResults(ResultProvider $provider, string $slug): JsonResponse
     {
         return new JsonResponse(
-            $provider->getResults($slug),
+            ['results' => $provider->getResults($slug)],
             200,
             ['Access-Control-Allow-Origin' => $this->allowedOrigin]
         );

@@ -26,6 +26,11 @@ class FeedRepository extends AbstractRepository
         return null;
     }
 
+    public function getCount(): int
+    {
+        return $this->getCollection()->countDocuments();
+    }
+
     public function getNextToUpdate(): ?Feed
     {
         $feed = $this->getCollection()->findOne(

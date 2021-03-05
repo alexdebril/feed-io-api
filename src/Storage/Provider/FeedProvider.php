@@ -20,6 +20,11 @@ class FeedProvider
         private FeedRepository $repository
     ) {}
 
+    public function getCount(): int
+    {
+        return $this->repository->getCount();
+    }
+
     public function getList(int $start = 0, int $limit = self::defaultLimit)
     {
         $key = $this->getFeedListCacheKey($start, $limit);

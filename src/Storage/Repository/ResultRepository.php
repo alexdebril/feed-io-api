@@ -17,13 +17,14 @@ class ResultRepository extends AbstractRepository
         return 'results';
     }
 
-    public function getResults(Feed $feed, int $start, int $limit): Cursor
+    public function getResults(Feed $feed, int $limit): Cursor
     {
+        $count = $this->getCollection()->countDocuments(['feedId' => $feed->getId()]);
         return $this->getCollection()->find(['feedId' => $feed->getId()],
             [
                 'typeMap' => ['root' => Result::class],
                 'sort' => ['eventDate' => -1],
-                'skip' => $start,
+                'skip' => $count - $limit,
                 'limit' => $limit,
             ]
         );
