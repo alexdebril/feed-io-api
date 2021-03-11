@@ -17,7 +17,6 @@ class FeedController
     public function __construct(
         private FeedIo $feedIo,
         private string $allowedOrigin,
-        private \Redis $redis
     ) {}
 
     #[Route('/consume', name: 'consume', methods: ['POST'])]

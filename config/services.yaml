@@ -6,20 +6,13 @@
 parameters:
     content.file: "%kernel.project_dir%/Resources/index.yml"
     allowed_origin: "%env(ALLOWED_ORIGIN)%"
-    mongodb_dsn: "%env(MONGODB_DSN)%"
-    mongodb_database: "%env(MONGODB_DATABASE)%"
-    redis_host: "%env(REDIS_HOST)%"
-    redis_pass: "%env(REDIS_PASS)%"
-    redis_port: "%env(REDIS_PORT)%"
     debril.rss_atom.provider.class: 'App\Storage\Provider\ItemProvider'
-    ws_url: "%env(WS_URL)%"
 
 services:
     # default configuration for services in *this* file
     _defaults:
         bind:
             $allowedOrigin: '%allowed_origin%'
-            $host: '%ws_url%'
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         public: false       # Allows optimizing the container by removing unused services; this also means
@@ -41,53 +34,5 @@ services:
     App\Content:
         arguments: ["%content.file%"]
 
-    App\Storage\Repository\FeedRepository:
-        alias: repository.feed
-
-    App\Storage\Repository\ItemRepository:
-        alias: repository.item
-
-    App\Storage\Repository\TopicRepository:
-        alias: repository.topic
-
-    App\Storage\Repository\ResultRepository:
-        alias: repository.result
-
     GuzzleHttp\Client:
         alias: guzzle.client
-
-    MongoDB\Database:
-        alias: mongo.database
-
-    repository.feed:
-        class: App\Storage\Repository\FeedRepository
-
-    repository.item:
-        class: App\Storage\Repository\ItemRepository
-
-    repository.topic:
-        class: App\Storage\Repository\TopicRepository
-
-    repository.result:
-        class: App\Storage\Repository\ResultRepository
-
-    mongo.client:
-        class: MongoDB\Client
-        arguments: ["%mongodb_dsn%"]
-
-    handler.item:
-        class: App\Handler\NewItemHandler
-        arguments: ["@guzzle.client", "%ws_url%"]
-
-    mongo.database:
-        class: MongoDB\Database
-        factory: ['@mongo.client', 'selectDatabase']
-        arguments: ["%mongodb_database%"]
-
-    Redis:
-        class: \Redis
-        calls:
-            - method: connect
-              arguments: ["%redis_host%", "%redis_port%"]
-            - method: auth
-              arguments: ["%redis_pass%"]
