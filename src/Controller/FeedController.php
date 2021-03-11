@@ -4,20 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Message\NewFeed;
-use App\Storage\Entity\Feed\Status;
-use App\Storage\Provider\FeedProvider;
-use App\Storage\Repository\FeedRepository;
-use FeedIo\FeedInterface;
 use FeedIo\FeedIo;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * Smells like code refactoring : many private methods in there, could be isolated in dedicated components.
- */
 
 #[Route('/feed', name: 'feed_')]
 class FeedController
@@ -57,54 +48,6 @@ class FeedController
         }
     }
 
-    #[Route('/submit', name: 'submit', methods: ['POST'])]
-    public function submit(Request $request, MessageBusInterface $bus): JsonResponse
-    {
-        try {
-            $url = $this->extractUrl($request);
-            if ($ok = $this->canProcess($url)) {
-                $bus->dispatch(
-                    new NewFeed($url)
-                );
-            }
-
-            return $this->newJsonResponse(
-                ['ok' => $ok]
-            );
-        } catch (\Exception $e) {
-            return $this->newJsonError($e);
-        }
-    }
-
-    #[Route('/accept', name: 'accept', methods: ['POST'])]
-    public function accept(Request $request, FeedRepository $repository): JsonResponse
-    {
-        try {
-            $feed = $repository->findOneBySlug($this->extractSlug($request));
-            $feed->setStatus(
-                new Status(Status::ACCEPTED)
-            );
-            $feed->setLanguage($this->extract($request, 'language'));
-            $repository->save($feed);
-
-            return $this->newJsonResponse(['ok' => true]);
-        } catch (\Exception $e) {
-            return $this->newJsonError($e);
-        }
-    }
-
-    #[Route('/list/{start<\d+>?0}/{limit<\d+>?10}', name: 'list', methods: ['GET'])]
-    public function getList(int $start, int $limit, FeedProvider $provider): JsonResponse
-    {
-        try {
-            $feeds = $provider->getList($start, $limit);
-
-            return $this->newJsonResponse(['feeds' => $feeds]);
-        } catch (\Exception $e) {
-            return $this->newJsonError($e);
-        }
-    }
-
     private function newJsonResponse($data): JsonResponse
     {
         return new JsonResponse(
@@ -135,11 +78,6 @@ class FeedController
         return $this->extract($request, 'url');
     }
 
-    private function extractSlug(Request $request): string
-    {
-        return $this->extract($request, 'slug');
-    }
-
     private function extract(Request $request, string $param): string
     {
         $data = json_decode($request->getContent(), true);
@@ -151,28 +89,4 @@ class FeedController
         throw new \InvalidArgumentException(sprintf('%s not found in the request', $param));
     }
 
-    private function canProcess(string $url): bool
-    {
-        $url = filter_var($url, FILTER_VALIDATE_URL);
-        if (!$url) {
-            return false;
-        }
-
-        if ($this->redis->get('url_'.$url)) {
-            return false;
-        }
-
-        $this->redis->set('url_'.$url, time());
-
-        try {
-            $feed = $this->feedIo->read($url)->getFeed();
-            if (!$feed instanceof FeedInterface) {
-                throw new \RuntimeException();
-            }
-        } catch (\Exception $e) {
-            return false;
-        }
-
-        return true;
-    }
 }
