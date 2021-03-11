@@ -6,26 +6,19 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
-        "ext-mongodb": "*",
-        "ext-redis": "*",
         "debril/feed-io": "^4.7",
         "debril/rss-atom-bundle": "^5.0",
         "doctrine/annotations": "^1.11",
-        "mongodb/mongodb": "^1.7",
         "symfony/console": "*",
         "symfony/dotenv": "*",
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "5.2.*",
-        "symfony/messenger": "5.2.*",
         "symfony/monolog-bundle": "^3.5",
-        "symfony/redis-messenger": "5.2.*",
-        "symfony/translation": "5.2.*",
         "symfony/yaml": "*"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.16",
-        "phpstan/phpstan": "^0.12.37",
-        "phpunit/phpunit": "^9.3"
+        "phpstan/phpstan": "^0.12.37"
     },
     "config": {
         "preferred-install": {
@@ -62,7 +55,6 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "src:test": "./vendor/bin/phpunit",
         "src:cs-fix": "./vendor/bin/php-cs-fixer fix src/",
         "src:lint": "./vendor/bin/php-cs-fixer fix --dry-run src/",
         "src:stan": "./vendor/bin/phpstan analyse --level 5 src/"
