@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use FeedIo\FeedIo;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,29 +21,37 @@ class FeedController
     ) {}
 
     #[Route('/consume', name: 'consume', methods: ['POST'])]
-    public function consume(Request $request): JsonResponse
+    public function consume(Request $request, LoggerInterface $logger): JsonResponse
     {
+        $url = $this->extractUrl($request);
         try {
+            $logger->info("consuming $url");
             return $this->newJsonResponse(
-                $this->feedIo->read(
-                    $this->extractUrl($request)
-                )->getFeed()
+                $this->feedIo->read($url)->getFeed()
             );
         } catch (\Exception $e) {
+            $logger->error("error while consuming $url", [
+                'error' => $e->getMessage(),
+                'exception' => get_class($e),
+            ]);
             return $this->newJsonError($e);
         }
     }
 
     #[Route('/discover', name: 'discover', methods: ['POST'])]
-    public function discover(Request $request): JsonResponse
+    public function discover(Request $request, LoggerInterface $logger): JsonResponse
     {
+        $url = $this->extractUrl($request);
         try {
+            $logger->info("discovering $url");
             return $this->newJsonResponse(
-                $this->feedIo->discover(
-                    $this->extractUrl($request)
-                )
+                $this->feedIo->discover($url)
             );
         } catch (\Exception $e) {
+            $logger->error("error while discovering $url", [
+                'error' => $e->getMessage(),
+                'exception' => get_class($e),
+            ]);
             return $this->newJsonError($e);
         }
     }
