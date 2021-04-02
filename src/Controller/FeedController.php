@@ -21,16 +21,16 @@ class FeedController
     ) {}
 
     #[Route('/consume', name: 'consume', methods: ['POST'])]
-    public function consume(Request $request, LoggerInterface $logger): JsonResponse
+    public function consume(Request $request, LoggerInterface $apiLogger): JsonResponse
     {
         $url = $this->extractUrl($request);
         try {
-            $logger->info("consuming $url");
+            $apiLogger->info("consuming $url");
             return $this->newJsonResponse(
                 $this->feedIo->read($url)->getFeed()
             );
         } catch (\Exception $e) {
-            $logger->error("error while consuming $url", [
+            $apiLogger->error("error while consuming $url", [
                 'error' => $e->getMessage(),
                 'exception' => get_class($e),
             ]);
@@ -39,16 +39,16 @@ class FeedController
     }
 
     #[Route('/discover', name: 'discover', methods: ['POST'])]
-    public function discover(Request $request, LoggerInterface $logger): JsonResponse
+    public function discover(Request $request, LoggerInterface $apiLogger): JsonResponse
     {
         $url = $this->extractUrl($request);
         try {
-            $logger->info("discovering $url");
+            $apiLogger->info("discovering $url");
             return $this->newJsonResponse(
                 $this->feedIo->discover($url)
             );
         } catch (\Exception $e) {
-            $logger->error("error while discovering $url", [
+            $apiLogger->error("error while discovering $url", [
                 'error' => $e->getMessage(),
                 'exception' => get_class($e),
             ]);

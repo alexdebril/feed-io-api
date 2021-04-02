@@ -1,7 +1,21 @@
 monolog:
+    channels: ['api', 'feedio']
+
     handlers:
         main:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
-            level: info
-            channels: ["!event"]
+            level: notice
+            channels: ["!event", "!api", "!feedio"]
+
+        api:
+            level:    info
+            type:     stream
+            path:     '%kernel.logs_dir%/api.log'
+            channels: [api]
+
+        feedio:
+            level:    info
+            type:     stream
+            path:     '%kernel.logs_dir%/feedio.log'
+            channels: [feedio]

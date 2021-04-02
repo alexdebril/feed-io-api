@@ -13,6 +13,7 @@ services:
     _defaults:
         bind:
             $allowedOrigin: '%allowed_origin%'
+            $apiLogger: '@monolog.logger.api'
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         public: false       # Allows optimizing the container by removing unused services; this also means
@@ -34,5 +35,18 @@ services:
     App\Content:
         arguments: ["%content.file%"]
 
-    GuzzleHttp\Client:
-        alias: guzzle.client
+    guzzle.client:
+        class: GuzzleHttp\Client
+
+    feedio.client:
+        class: FeedIo\Adapter\Guzzle\Client
+        arguments: ["@guzzle.client"]
+
+    feedio:
+        public: true
+        class: FeedIo\FeedIo
+        arguments: ["@feedio.client", "@monolog.logger.feedio"]
+
+    FeedIo\FeedIo:
+        public: true
+        alias: feedio
